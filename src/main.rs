@@ -2,9 +2,13 @@ extern crate getopts;
 use getopts::Options;
 use std::env;
 use std::path::Path;
+use std::process::exit;
 
 static VERSION: &'static str = "0.1.0";
-static DEFAULT_ITERATIONS: u32 = 100;
+static DEFAULT_ITERATIONS: usize = 100;
+static DEFAULT_N: usize = 1048576;
+static DEFAULT_R: usize = 8;
+static DEFAULT_P: usize = 1;
 
 fn print_usage(program: &str, opts: Options) {
     let brief = format!("Usage: {} v{} [options]", program, VERSION);
@@ -44,8 +48,24 @@ fn main() {
     }
 
     let iterations = matches.opt_str("i")
-        .and_then(|o| o.parse::<u32>().ok())
+        .and_then(|o| o.parse::<usize>().ok())
         .unwrap_or(DEFAULT_ITERATIONS);
+    let salt = match matches.opt_str("s") {
+        Some(s) => s,
+        None => {
+            print_usage(&program, opts);
+            exit(-1);
+        }
+    };
+    let n = matches.opt_str("n")
+        .and_then(|o| o.parse::<usize>().ok())
+        .unwrap_or(DEFAULT_N);
+    let r = matches.opt_str("r")
+        .and_then(|o| o.parse::<usize>().ok())
+        .unwrap_or(DEFAULT_R);
+    let p = matches.opt_str("p")
+        .and_then(|o| o.parse::<usize>().ok())
+        .unwrap_or(DEFAULT_P);
 
-    println!("Iterations {}", iterations);
+    println!("Working with parameters: n={}, r={}, p={}, iterations={}", n, r, p, iterations);
 }

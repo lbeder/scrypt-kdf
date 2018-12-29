@@ -25,7 +25,7 @@ const DEFAULT_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
     log_n: 15,
     r: 8,
     p: 1,
-    iterations: 10
+    iterations: 50
 };
 
 const TEST_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {

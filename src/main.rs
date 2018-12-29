@@ -1,10 +1,12 @@
 extern crate getopts;
 extern crate pbr;
+#[macro_use] extern crate text_io;
 
 use getopts::Options;
 use std::env;
 use std::path::Path;
 use std::process::exit;
+use std::io::{self, Write};
 use pbr::ProgressBar;
 
 static VERSION: &'static str = "0.1.0";
@@ -18,8 +20,7 @@ struct ScryptKDFOptions {
     n: u32,
     r: u32,
     p: u32,
-    iterations: u32,
-    salt: String
+    iterations: u32
 }
 
 fn print_usage(program: &str, opts: &Options) {
@@ -34,7 +35,6 @@ fn print_version(program: &str) {
 fn get_options() -> Options {
     let mut opts = Options::new();
     opts.optopt("i", "iterations", "set the number of required iterations", "ITER");
-    opts.optopt("s", "salt", "set the salt to protect against Rainbow table attacks", "SALT");
     opts.optopt("n", "work-factor", "set the work factor", "N");
     opts.optopt("r", "blocksize", "set the blocksize parameter", "R");
     opts.optopt("p", "parallelization", "set the parallelization parameter", "P");
@@ -67,13 +67,7 @@ fn parse_options() -> ScryptKDFOptions {
     let iterations = matches.opt_str("i")
         .and_then(|o| o.parse::<u32>().ok())
         .unwrap_or(DEFAULT_ITERATIONS);
-    let salt = match matches.opt_str("s") {
-        Some(s) => s,
-        None => {
-            print_usage(&program, &opts);
-            exit(-1);
-        }
-    };
+
     let n = matches.opt_str("n")
         .and_then(|o| o.parse::<u32>().ok())
         .unwrap_or(DEFAULT_N);
@@ -88,9 +82,15 @@ fn parse_options() -> ScryptKDFOptions {
         n: n,
         r: r,
         p: p,
-        iterations: iterations,
-        salt: salt
+        iterations: iterations
     }
+}
+
+fn get_salt() -> String {
+    print!("Enter your salt: ");
+    io::stdout().flush().unwrap();
+
+    read!()
 }
 
 fn get_secret() -> String {
@@ -107,7 +107,7 @@ fn get_secret() -> String {
     String::from(pass)
 }
 
-fn derive(opts: &ScryptKDFOptions, secret: &str) {
+fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) {
     println!("Deriving...");
     println!();
 
@@ -129,6 +129,8 @@ fn main() {
     println!("Settings: {:?}", opts);
     println!();
 
+    let salt = get_salt();
     let secret = get_secret();
-    derive(&opts, &secret);
+
+    derive(&opts, &salt, &secret);
 }

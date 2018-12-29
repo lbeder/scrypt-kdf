@@ -54,6 +54,7 @@ Enter your secret again: 🔑
 
 Deriving with settings: log_n=15, r=8, p=1, iterations=50, keysize=16
 Processing: 50 / 50 [===========================================================================================================] 100.00 %
+Finished in 7m 53
 Key is: 762a2496890c831a63f2094a95d1b699
 ```
 
@@ -92,11 +93,13 @@ Printing test vectors...
 
 Deriving with settings: log_n=14, r=8, p=1, iterations=1, keysize=128
 Processing: 1 / 1 [=============================================================================================================] 100.00 %
+Finished in 4s
 Key for test vector "" is:
 d72c87d0f077c7766f2985dfab30e8955c373a13a1e93d315203939f542ff86e73ee37c31f4c4b571f4719fa8e3589f12db8dcb57ea9f56764bb7d58f64cf705f1f64bdd91c35da954a6fb7896f1839e6ba03f68f08b686527f9f1588ab103c22152046258e2d679842252afeb3cd6eb4e01fe9c285eb916da7e4b7a39ee5eba
 
 Deriving with settings: log_n=14, r=8, p=1, iterations=3, keysize=128
 Processing: 3 / 3 [=============================================================================================================] 100.00 %
+Finished in 14s
 Key for test vector "Hello World" is:
 38f3b062f703aa0c958fc8944c9f005f1bd03a056048d5cdc6186979e4c178504050580fab8744c0272253f7df87a2e2f9bb5449a2361f0fed5105ea549e86e41f68d8b160cda5ca91e020067b0c53fc20ae19993e1f40db60d8963ec8c7c0fe74d48a44f1f78a4259f0376f6d7dd2c07d2e7aaae023b8bdfa87ddbf503fe9a3
 ```

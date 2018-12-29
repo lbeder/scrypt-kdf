@@ -3,13 +3,15 @@ extern crate pbr;
 extern crate hex;
 #[macro_use] extern crate text_io;
 
-use getopts::Options;
 use std::env;
 use std::path::Path;
 use std::process::exit;
 use std::io::{self, Write};
+use std::time::{Duration, Instant};
+use getopts::Options;
 use pbr::ProgressBar;
 use crypto::scrypt::{scrypt, ScryptParams};
+use humantime::format_duration;
 
 #[derive(Debug)]
 struct ScryptKDFOptions {
@@ -183,6 +185,8 @@ fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
     pb.show_speed = false;
 
     let mut res: Vec<u8> = secret.as_bytes().to_vec();
+
+    let start = Instant::now();
     for _ in 0..opts.iterations {
         pb.message("Processing: ");
         pb.tick();
@@ -192,7 +196,8 @@ fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
         pb.inc();
     }
 
-    pb.finish_println("");
+    pb.finish_println(&format!("Finished in {}\n", format_duration(Duration::new(start.elapsed().as_secs(), 0))
+        .to_string()));
 
     res
 }

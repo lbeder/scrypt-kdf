@@ -20,6 +20,11 @@ struct ScryptKDFOptions {
     keysize: usize
 }
 
+struct TestScryptKDFOptions {
+    opts: ScryptKDFOptions,
+    secret: &'static str
+}
+
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 const DEFAULT_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
@@ -30,15 +35,28 @@ const DEFAULT_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
     keysize: 16
 };
 
-const TEST_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
-    log_n: 14,
-    r: 8,
-    p: 1,
-    iterations: 1,
-    keysize: 128
-};
-
-const TEST_VECTORS: &'static [&'static str] = &["", "Hello World"];
+const TEST_VECTORS: &'static [&'static TestScryptKDFOptions] = &[
+    &TestScryptKDFOptions {
+        opts: ScryptKDFOptions {
+            log_n: 14,
+            r: 8,
+            p: 1,
+            iterations: 1,
+            keysize: 128
+        },
+        secret: ""
+    },
+    &TestScryptKDFOptions {
+        opts: ScryptKDFOptions {
+            log_n: 14,
+            r: 8,
+            p: 1,
+            iterations: 3,
+            keysize: 128
+        },
+        secret: "Hello World"
+    }
+];
 
 const MAX_KDF_SIZE: usize = 128;
 
@@ -149,10 +167,10 @@ fn print_test_vectors() {
     println!("Printing test vectors...");
     println!();
 
-    for test in TEST_VECTORS {
-        let key = derive(&TEST_OPTIONS, "", test);
+    for test_vector in TEST_VECTORS {
+        let key = derive(&test_vector.opts, "", &test_vector.secret);
 
-        println!("Key for test vector \"{}\" is: \n{}", test, hex::encode(&key as &[u8]));
+        println!("Key for test vector \"{}\" is: \n{}", test_vector.secret, hex::encode(&key as &[u8]));
         println!();
     }
 }

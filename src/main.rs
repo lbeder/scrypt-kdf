@@ -136,9 +136,9 @@ fn print_test_vectors() {
     println!();
 
     for test in TEST_VECTORS {
-        let res = derive(&TEST_OPTIONS, "", test);
+        let key = derive(&TEST_OPTIONS, "", test);
 
-        println!("Key for test vector \"{}\" is: \n{}", test, hex::encode(&res as &[u8]));
+        println!("Key for test vector \"{}\" is: \n{}", test, hex::encode(&key as &[u8]));
         println!();
     }
 }
@@ -180,7 +180,7 @@ fn main() {
     let salt = get_salt();
     let secret = get_secret();
 
-    let res = derive(&opts, &salt, &secret);
-    println!("Key is: \n{}", hex::encode(&res as &[u8]));
+    let key = derive(&opts, &salt, &secret);
+    println!("Key is: \n{}", hex::encode(&key as &[u8]));
     println!();
 }

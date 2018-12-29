@@ -1,8 +1,11 @@
 extern crate getopts;
+extern crate pbr;
+
 use getopts::Options;
 use std::env;
 use std::path::Path;
 use std::process::exit;
+use pbr::ProgressBar;
 
 static VERSION: &'static str = "0.1.0";
 static DEFAULT_ITERATIONS: u32 = 100;
@@ -102,10 +105,28 @@ fn get_secret() -> String {
     String::from(pass)
 }
 
+fn derive(opts: &ScryptKDFOptions, secret: &str) {
+    println!("Deriving...");
+    println!();
+
+    let mut pb = ProgressBar::new(opts.iterations as u64);
+    pb.show_speed = false;
+
+    let duration = std::time::Duration::from_millis(100);
+    for _ in 0..opts.iterations {
+        pb.inc();
+        std::thread::sleep(duration);
+    }
+
+    pb.finish_print("Finished");
+    println!();
+}
+
 fn main() {
     let opts = parse_options();
-    println!("Working with {:?}", opts);
+    println!("Settings: {:?}", opts);
+    println!();
 
     let secret = get_secret();
-    println!("Your secret is {}", secret);
+    derive(&opts, &secret);
 }

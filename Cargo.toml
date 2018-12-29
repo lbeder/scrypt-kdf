@@ -7,3 +7,4 @@ edition = "2018"
 [dependencies]
 getopts = "0.2"
 rpassword = "2.1.0"
+pbr = "1.0.1"

@@ -22,7 +22,7 @@ struct ScryptKDFOptions {
     salt: String
 }
 
-fn print_usage(program: &str, opts: Options) {
+fn print_usage(program: &str, opts: &Options) {
     let brief = format!("Usage: {} v{} [options]", program, VERSION);
     print!("{}", opts.usage(&brief));
 }
@@ -60,7 +60,7 @@ fn parse_options() -> ScryptKDFOptions {
     }
 
     if matches.opt_present("h") {
-        print_usage(&program, opts);
+        print_usage(&program, &opts);
         exit(-1);
     }
 
@@ -70,7 +70,7 @@ fn parse_options() -> ScryptKDFOptions {
     let salt = match matches.opt_str("s") {
         Some(s) => s,
         None => {
-            print_usage(&program, opts);
+            print_usage(&program, &opts);
             exit(-1);
         }
     };
@@ -96,6 +96,8 @@ fn parse_options() -> ScryptKDFOptions {
 fn get_secret() -> String {
     let pass = rpassword::prompt_password_stdout("Enter your secret: ").unwrap();
     let pass2 = rpassword::prompt_password_stdout("Enter your secret again: ").unwrap();
+
+    println!();
 
     if pass != pass2 {
         println!("Secrets don't match!");

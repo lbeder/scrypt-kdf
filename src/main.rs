@@ -16,7 +16,8 @@ struct ScryptKDFOptions {
     log_n: u8,
     r: u32,
     p: u32,
-    iterations: u32
+    iterations: u32,
+    keysize: usize
 }
 
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
@@ -25,19 +26,21 @@ const DEFAULT_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
     log_n: 15,
     r: 8,
     p: 1,
-    iterations: 50
+    iterations: 50,
+    keysize: 16
 };
 
 const TEST_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
     log_n: 14,
     r: 8,
     p: 1,
-    iterations: 1
+    iterations: 1,
+    keysize: 128
 };
 
 const TEST_VECTORS: &'static [&'static str] = &["", "Hello World"];
 
-const KDF_SIZE: usize = 128;
+const MAX_KDF_SIZE: usize = 128;
 
 fn print_usage(program: &str, opts: &Options) {
     let brief = format!("Usage: {} v{} [options]", program, VERSION);
@@ -55,6 +58,7 @@ fn get_options() -> Options {
     opts.optopt("n", "logn", &format!("set the log2 of the work factor (default: {})", DEFAULT_OPTIONS.log_n), "LOGN");
     opts.optopt("r", "blocksize", &format!("set the blocksize parameter (default: {})", DEFAULT_OPTIONS.r), "R");
     opts.optopt("p", "parallel", &format!("set the parallelization parameter (default: {})", DEFAULT_OPTIONS.p), "P");
+    opts.optopt("k", "keysize", &format!("set the length of the derived (default: {})", DEFAULT_OPTIONS.keysize), "SIZE");
     opts.optflag("t", "test", "print test vectors");
     opts.optflag("h", "help", "print this help menu");
     opts.optflag("v", "version", "print version information");
@@ -103,11 +107,20 @@ fn parse_options() -> ScryptKDFOptions {
         .and_then(|o| o.parse::<u32>().ok())
         .unwrap_or(DEFAULT_OPTIONS.p);
 
+    let keysize = matches.opt_str("k")
+        .and_then(|o| o.parse::<usize>().ok())
+        .unwrap_or(DEFAULT_OPTIONS.keysize);
+    if keysize > MAX_KDF_SIZE {
+        println!("Keysize ({}) must be lower than {}", keysize, MAX_KDF_SIZE);
+        exit(-1);
+    }
+
     ScryptKDFOptions {
         log_n: log_n,
         r: r,
         p: p,
-        iterations: iterations
+        iterations: iterations,
+        keysize: keysize
     }
 }
 
@@ -144,36 +157,34 @@ fn print_test_vectors() {
     }
 }
 
-fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> [u8; KDF_SIZE] {
-    println!("Deriving with settings: log_n={}, r={}, p={}, iterations={}", opts.log_n, opts.r, opts.p,
-        opts.iterations);
+fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
+    println!("Deriving with settings: log_n={}, r={}, p={}, iterations={}, keysize={}", opts.log_n, opts.r, opts.p,
+        opts.iterations, opts.keysize);
 
     let mut pb = ProgressBar::new(opts.iterations as u64);
     pb.show_speed = false;
 
-    let mut res = secret.as_bytes();
-    let mut next_res = [0u8; KDF_SIZE];
+    let mut res: Vec<u8> = secret.as_bytes().to_vec();
     for _ in 0..opts.iterations {
         pb.message("Processing: ");
         pb.tick();
 
-        next_res = derive_scrypt(&opts, salt.as_bytes(), &res);
-        res = &next_res[..];
+        res = derive_scrypt(&opts, salt.as_bytes(), &res);
 
         pb.inc();
     }
 
     pb.finish_println("");
 
-    next_res
+    res
 }
 
-fn derive_scrypt(opts: &ScryptKDFOptions, salt: &[u8], secret: &[u8]) -> [u8; KDF_SIZE] {
-    let mut dk = [0u8; KDF_SIZE];
+fn derive_scrypt(opts: &ScryptKDFOptions, salt: &[u8], secret: &Vec<u8>) -> Vec<u8> {
+    let mut dk = vec![0; opts.keysize];
     let params: ScryptParams = ScryptParams::new(opts.log_n, opts.r, opts.p);
     scrypt(secret, salt, &params, &mut dk);
 
-    dk
+    dk.to_vec()
 }
 
 fn main() {
@@ -183,6 +194,6 @@ fn main() {
     let secret = get_secret();
 
     let key = derive(&opts, &salt, &secret);
-    println!("Key is: \n{}", hex::encode(&key as &[u8]));
+    println!("Key is: {}", hex::encode(&key as &[u8]));
     println!();
 }

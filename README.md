@@ -5,9 +5,10 @@ Scrypt Key Derivation Function in Rust
 ## Build
 
 ```bash
-$ git clone https://github.com/lbeder/scrypt-kdf
-$ cd scrypt-kdf
-$ cargo build --release
+git clone https://github.com/lbeder/scrypt-kdf
+cd scrypt-kdf
+
+cargo build --release
 ```
 
 ## Usage

@@ -38,8 +38,8 @@ Progress status:
 
 ```bash
 Enter your salt: salt
-Enter your secret:
-Enter your secret again:
+Enter your secret: 🔑
+Enter your secret again: 🔑
 
 Deriving with settings: log_n=15, r=8, p=1, iterations=50, , keysize=16
 Processing: 3 / 50 [======>-----------------------------------------------------------------------------------------------------] 6.00 % 7m
@@ -49,8 +49,8 @@ Final result:
 
 ```bash
 Enter your salt: salt
-Enter your secret:
-Enter your secret again:
+Enter your secret: 🔑
+Enter your secret again: 🔑
 
 Deriving with settings: log_n=15, r=8, p=1, iterations=50, keysize=16
 Processing: 50 / 50 [===========================================================================================================] 100.00 %

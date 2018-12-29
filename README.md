@@ -52,10 +52,9 @@ Enter your salt: salt
 Enter your secret:
 Enter your secret again:
 
-Deriving with settings: log_n=15, r=8, p=1, iterations=50
+Deriving with settings: log_n=15, r=8, p=1, iterations=50, keysize=16
 Processing: 50 / 50 [===========================================================================================================] 100.00 %
-Key is:
-5fff0f984ea0c5305349f23bb5f89414b9e2e31c8c4e8f2f83645b8df1f0dbd9510ebe7eeb442236dcf9cd6f803435b46dfa0ab346c3b8ef3e39de90e18719cab318ff0c1b5073c64cc1a05e89e25e6e83bfe76dbb3ae94ac1f4c65f85c37f5661655a20da7d16e15bd13f126bbb4ae9334ba3a8ba74d57926be083dd0f12db9
+Key is: 762a2496890c831a63f2094a95d1b699
 ```
 
 ## Test Vectors

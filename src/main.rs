@@ -50,10 +50,11 @@ fn print_version(program: &str) {
 
 fn get_options() -> Options {
     let mut opts = Options::new();
-    opts.optopt("i", "iterations", "set the number of required iterations", "ITER");
-    opts.optopt("n", "logn", "set the log2 of the work factor", "LOGN");
-    opts.optopt("r", "blocksize", "set the blocksize parameter", "R");
-    opts.optopt("p", "parallelization", "set the parallelization parameter", "P");
+    opts.optopt("i", "iterations", &format!("set the number of required iterations (default: {})",
+        DEFAULT_OPTIONS.iterations), "ITER");
+    opts.optopt("n", "logn", &format!("set the log2 of the work factor (default: {})", DEFAULT_OPTIONS.log_n), "LOGN");
+    opts.optopt("r", "blocksize", &format!("set the blocksize parameter (default: {})", DEFAULT_OPTIONS.r), "R");
+    opts.optopt("p", "parallel", &format!("set the parallelization parameter (default: {})", DEFAULT_OPTIONS.p), "P");
     opts.optflag("t", "test", "print test vectors");
     opts.optflag("h", "help", "print this help menu");
     opts.optflag("v", "version", "print version information");

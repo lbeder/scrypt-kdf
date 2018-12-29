@@ -145,7 +145,8 @@ fn print_test_vectors() {
 }
 
 fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> [u8; KDF_SIZE] {
-    println!("Deriving with settings: {:?}", opts);
+    println!("Deriving with settings: log_n={}, r={}, p={}, iterations={}", opts.log_n, opts.r, opts.p,
+        opts.iterations);
 
     let mut pb = ProgressBar::new(opts.iterations as u64);
     pb.show_speed = false;

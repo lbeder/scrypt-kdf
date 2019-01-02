@@ -18,8 +18,8 @@ Usage: scrypt-kdf v0.1.1 [options]
 
 Options:
     -i, --iterations ITER
-                        set the number of required iterations (default: 50)
-    -n, --logn LOGN     set the log2 of the work factor (default: 15)
+                        set the number of required iterations (default: 100)
+    -n, --logn LOGN     set the log2 of the work factor (default: 20)
     -r, --blocksize R   set the blocksize parameter (default: 8)
     -p, --parallel P    set the parallelization parameter (default: 1)
     -k, --keysize SIZE  set the length of the derived (default: 16)
@@ -41,8 +41,8 @@ Enter your salt: salt
 Enter your secret: 🔑
 Enter your secret again: 🔑
 
-Deriving with settings: log_n=15, r=8, p=1, iterations=50, , keysize=16
-Processing: 3 / 50 [======>-----------------------------------------------------------------------------------------------------] 6.00 % 7m
+Deriving with settings: log_n=20, r=8, p=1, iterations=100, keysize=16
+Processing: 3 / 100 [======>-----------------------------------------------------------------------------------------------------] 6.00 % 7m
 ```
 
 Final result:
@@ -52,10 +52,10 @@ Enter your salt: salt
 Enter your secret: 🔑
 Enter your secret again: 🔑
 
-Deriving with settings: log_n=15, r=8, p=1, iterations=50, keysize=16
-Processing: 50 / 50 [===========================================================================================================] 100.00 %
-Finished in 7m 53
-Key is: 762a2496890c831a63f2094a95d1b699
+Deriving with settings: log_n=20, r=8, p=1, iterations=100, keysize=16
+Processing: 100 / 100[===========================================================================================================] 100.00 %
+Finished in 5m
+Key is: ff08101f061aa670158601bf5be5efa6
 ```
 
 ## Test Vectors

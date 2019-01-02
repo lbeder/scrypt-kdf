@@ -30,10 +30,10 @@ struct TestScryptKDFOptions {
 const VERSION: &'static str = env!("CARGO_PKG_VERSION");
 
 const DEFAULT_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
-    log_n: 15,
+    log_n: 20,
     r: 8,
     p: 1,
-    iterations: 50,
+    iterations: 100,
     keysize: 16
 };
 

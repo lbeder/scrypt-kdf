@@ -1,17 +1,17 @@
 extern crate getopts;
 extern crate pbr;
 extern crate hex;
-#[macro_use] extern crate text_io;
+extern crate crossterm;
 
 use std::env;
 use std::path::Path;
 use std::process::exit;
-use std::io::{self, Write};
 use std::time::{Duration, Instant};
 use getopts::Options;
 use pbr::ProgressBar;
 use crypto::scrypt::{scrypt, ScryptParams};
 use humantime::format_duration;
+use crossterm::{terminal::{terminal}, input, style::{Color, style}};
 
 #[derive(Debug)]
 struct ScryptKDFOptions {
@@ -145,10 +145,8 @@ fn parse_options() -> ScryptKDFOptions {
 }
 
 fn get_salt() -> String {
-    print!("Enter your salt: ");
-    io::stdout().flush().unwrap();
-
-    read!()
+    terminal().write("Enter your salt: ").unwrap();
+    input().read_line().unwrap()
 }
 
 fn get_secret() -> String {
@@ -217,6 +215,9 @@ fn main() {
     let secret = get_secret();
 
     let key = derive(&opts, &salt, &secret);
-    println!("Key is: {}", hex::encode(&key as &[u8]));
+
+    print!("Key is (please highlight to see): ");
+    println!("{}", style(hex::encode(&key as &[u8])).with(Color::Black).on(Color::Black));
+
     println!();
 }

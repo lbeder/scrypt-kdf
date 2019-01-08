@@ -32,7 +32,7 @@ Options:
 
 Let's try to derive the key for the secret `test`, using the salt `salt`:
 
-> ././target/release/scrypt-kdf
+> ./target/release/scrypt-kdf
 
 Progress status:
 
@@ -53,9 +53,9 @@ Enter your secret: 🔑
 Enter your secret again: 🔑
 
 Deriving with settings: log_n=20, r=8, p=1, iterations=100, keysize=16
-Processing: 100 / 100[===========================================================================================================] 100.00 %
-Finished in 5m
-Key is: ff08101f061aa670158601bf5be5efa6
+Processing: 100 / 100 [=======================================================================================================================================] 100.00 %
+Finished in 5m 6s
+Key is (please highlight to see): ff08101f061aa670158601bf5be5efa6
 ```
 
 ## Test Vectors

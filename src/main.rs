@@ -64,11 +64,11 @@ const MAX_KDF_SIZE: usize = 128;
 
 fn print_usage(program: &str, opts: &Options) {
     let brief = format!("Usage: {} v{} [options]", program, VERSION);
-    print!("{}", opts.usage(&brief));
+    println!("{}", opts.usage(&brief));
 }
 
 fn print_version(program: &str) {
-    print!("{} v{}", program, VERSION);
+    println!("{} v{}", program, VERSION);
 }
 
 fn get_options() -> Options {
@@ -218,6 +218,4 @@ fn main() {
 
     print!("Key is (please highlight to see): ");
     println!("{}", style(hex::encode(&key as &[u8])).with(Color::Black).on(Color::Black));
-
-    println!();
 }

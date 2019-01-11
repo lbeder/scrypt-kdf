@@ -14,7 +14,7 @@ cargo build --release
 ## Usage
 
 ```bash
-Usage: scrypt-kdf v0.1.1 [options]
+Usage: scrypt-kdf v0.3.2 [options]
 
 Options:
     -i, --iterations ITER

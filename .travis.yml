@@ -3,3 +3,5 @@ rust:
   - stable
   - nightly
 cache: cargo
+script:
+  - cargo test --release

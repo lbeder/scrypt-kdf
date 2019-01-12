@@ -4,6 +4,9 @@ VERSION=$(cargo pkgid | cut -d# -f2 | cut -d: -f2)
 
 rm -rf target/*.tgz target/*.tgz.asc target/release.md
 
+echo "Running tests..."
+cargo test --release
+
 echo "Building v${VERSION} for Mac OS..."
 APPLE_RELEASE="target/scrypt-kdf-${VERSION}-osx.tgz"
 cargo build --release --target=x86_64-apple-darwin

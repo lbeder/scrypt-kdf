@@ -12,6 +12,9 @@ LINUX_RELEASE="target/scrypt-kdf-${VERSION}-linux-amd64.tgz"
 CROSS_COMPILE=x86_64-linux-musl- cargo build --release --target=x86_64-unknown-linux-musl
 tar zcvf ${LINUX_RELEASE} target/x86_64-unknown-linux-musl/release/scrypt-kdf
 
+keybase pgp sign -i ${APPLE_RELEASE} --detached > ${APPLE_RELEASE}.asc
+keybase pgp sign -i ${LINUX_RELEASE} --detached > ${LINUX_RELEASE}.asc
+
 RELEASE_NOTES="target/release.md"
 echo "Preparing release notes..."
 

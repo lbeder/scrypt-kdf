@@ -2,15 +2,6 @@
 
 Scrypt Key Derivation Function in Rust
 
-## Build
-
-```bash
-git clone https://github.com/lbeder/scrypt-kdf
-cd scrypt-kdf
-
-cargo build --release
-```
-
 ## Usage
 
 ```bash
@@ -26,6 +17,43 @@ Options:
     -t, --test          print test vectors
     -h, --help          print this help menu
     -v, --version       print version information
+```
+
+## Build
+
+### Mac OS
+
+```bash
+git clone https://github.com/lbeder/scrypt-kdf
+cd scrypt-kdf
+
+cargo build --release
+```
+
+### Linux x86_x64
+
+In order to get stuff working later, use the `nightly` branch of Rust:
+
+```bash
+rustup override set nightly
+```
+
+Install a standard Linux target on a Mac (note, that the opposite is currently impossible):
+
+```bash
+rustup target add x86_64-unknown-linux-musl
+```
+
+Use `homebrew` to download a community-provided binary for `musl` cross-compilation:
+
+```bash
+brew install FiloSottile/musl-cross/musl-cross
+```
+
+Now you can build it:
+
+```bash
+CROSS_COMPILE=x86_64-linux-musl- cargo build --target=x86_64-unknown-linux-musl
 ```
 
 ## Example

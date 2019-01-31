@@ -6,13 +6,13 @@ pub struct ScryptKDFOptions {
     pub r: u32,
     pub p: u32,
     pub iterations: u32,
-    pub keysize: usize
+    pub keysize: usize,
 }
 
 #[derive(PartialEq, Debug)]
 pub struct TestScryptKDFOptions {
     pub opts: ScryptKDFOptions,
-    pub secret: &'static str
+    pub secret: &'static str,
 }
 
 const DEFAULT_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
@@ -20,7 +20,7 @@ const DEFAULT_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
     r: 8,
     p: 1,
     iterations: 100,
-    keysize: 16
+    keysize: 16,
 };
 
 const TEST_VECTORS: &[&TestScryptKDFOptions] = &[
@@ -30,9 +30,9 @@ const TEST_VECTORS: &[&TestScryptKDFOptions] = &[
             r: 8,
             p: 1,
             iterations: 1,
-            keysize: 128
+            keysize: 128,
         },
-        secret: ""
+        secret: "",
     },
     &TestScryptKDFOptions {
         opts: ScryptKDFOptions {
@@ -40,10 +40,10 @@ const TEST_VECTORS: &[&TestScryptKDFOptions] = &[
             r: 8,
             p: 1,
             iterations: 3,
-            keysize: 128
+            keysize: 128,
         },
-        secret: "Hello World"
-    }
+        secret: "Hello World",
+    },
 ];
 
 const MAX_KDF_SIZE: usize = 128;
@@ -147,103 +147,103 @@ mod tests {
     }
 
     derive_tests! {
-        test_data_0: (ScryptKDFOptions {
-            log_n: 14,
-            r: 8,
-            p: 1,
-            iterations: 1,
-            keysize: 128
-        }, "salt", "test",
-        "72f47a5f6bcb1b96a9d77b2c2f1463395d4a3a325fada6290fc0fef7bcddb58e\
-         b46e36a0d944613790c2e7bc9ea0e8447b9c4b493734c43526a14963e4a56bdc\
-         bf50dead892d3e63104433f3f763a867f6a46e1745169517b0d82f5173a80ccf\
-         fd9c2ed0aaa89cedde6b18a9351645cf4006531e637d8cab49f61a451f3f16a6"),
+    test_data_0: (ScryptKDFOptions {
+        log_n: 14,
+        r: 8,
+        p: 1,
+        iterations: 1,
+        keysize: 128
+    }, "salt", "test",
+    "72f47a5f6bcb1b96a9d77b2c2f1463395d4a3a325fada6290fc0fef7bcddb58e\
+     b46e36a0d944613790c2e7bc9ea0e8447b9c4b493734c43526a14963e4a56bdc\
+     bf50dead892d3e63104433f3f763a867f6a46e1745169517b0d82f5173a80ccf\
+     fd9c2ed0aaa89cedde6b18a9351645cf4006531e637d8cab49f61a451f3f16a6"),
 
-        test_data_1: (ScryptKDFOptions {
-            log_n: 12,
-            r: 8,
-            p: 1,
-            iterations: 10,
-            keysize: 32
-        }, "salt", "test",
-        "e419dac917d02f544469a5164c797ed0066cea15568958f6acc58411df5ac17e"),
+    test_data_1: (ScryptKDFOptions {
+        log_n: 12,
+        r: 8,
+        p: 1,
+        iterations: 10,
+        keysize: 32
+    }, "salt", "test",
+    "e419dac917d02f544469a5164c797ed0066cea15568958f6acc58411df5ac17e"),
 
-        test_data_2: (ScryptKDFOptions {
-            log_n: 20,
-            r: 8,
-            p: 1,
-            iterations: 4,
-            keysize: 64
-        }, "salt", "test",
-        "bd13f3cba884d87aeb68ca53efcd65175af1ee9d60907cf71d91e6bbddfa95ee\
-         7fb4d48442e54c8a28ac1d02298cdd793618827755ca69704b6cb9ec2b1e2f8e"),
+    test_data_2: (ScryptKDFOptions {
+        log_n: 20,
+        r: 8,
+        p: 1,
+        iterations: 4,
+        keysize: 64
+    }, "salt", "test",
+    "bd13f3cba884d87aeb68ca53efcd65175af1ee9d60907cf71d91e6bbddfa95ee\
+     7fb4d48442e54c8a28ac1d02298cdd793618827755ca69704b6cb9ec2b1e2f8e"),
 
-        test_data_3: (ScryptKDFOptions {
-            log_n: 15,
-            r: 8,
-            p: 1,
-            iterations: 4,
-            keysize: 64
-        }, "", "test",
-        "8c18f4925f57caa69143d178e48d9a559963b045e413dc30ff02fd1c3c9ba1c5\
-         a5bf684aaf2aceb4fbc2eef11f4f9ac71b837b68797dc9c19062653b3e96664a"),
+    test_data_3: (ScryptKDFOptions {
+        log_n: 15,
+        r: 8,
+        p: 1,
+        iterations: 4,
+        keysize: 64
+    }, "", "test",
+    "8c18f4925f57caa69143d178e48d9a559963b045e413dc30ff02fd1c3c9ba1c5\
+     a5bf684aaf2aceb4fbc2eef11f4f9ac71b837b68797dc9c19062653b3e96664a"),
 
-        test_data_4: (ScryptKDFOptions {
-            log_n: 15,
-            r: 8,
-            p: 1,
-            iterations: 4,
-            keysize: 64
-        }, "", "",
-        "7cb7f9c94b25bbf9afa023d20340bff9164658ccce3f09b164b5ce7130aaf84e\
-         c8fccbfc9d9de76a133218b7220da069430f40c58ef4bc53c639d5ea72b4437a"),
+    test_data_4: (ScryptKDFOptions {
+        log_n: 15,
+        r: 8,
+        p: 1,
+        iterations: 4,
+        keysize: 64
+    }, "", "",
+    "7cb7f9c94b25bbf9afa023d20340bff9164658ccce3f09b164b5ce7130aaf84e\
+     c8fccbfc9d9de76a133218b7220da069430f40c58ef4bc53c639d5ea72b4437a"),
 
-        test_data_5: (ScryptKDFOptions {
-            log_n: 15,
-            r: 8,
-            p: 1,
-            iterations: 4,
-            keysize: 128
-        }, "salt", "",
-        "9e64f92ebbb0e4d70202cf9be66d8344c9b1b571801e28e69f733ea9d0abc285\
-         92fd3c0020a8a5b2a9d653751aa4528acb74887ff93699d38bf54d0714f08f65\
-         cb63396a4a339707ca37ebfe50140f9c8bcf8ab3f845ead69669c0e6234d1748\
-         3723d01f52a47f352e184887f09cf04b0e0078125a5a223dec641f0961545aea"),
+    test_data_5: (ScryptKDFOptions {
+        log_n: 15,
+        r: 8,
+        p: 1,
+        iterations: 4,
+        keysize: 128
+    }, "salt", "",
+    "9e64f92ebbb0e4d70202cf9be66d8344c9b1b571801e28e69f733ea9d0abc285\
+     92fd3c0020a8a5b2a9d653751aa4528acb74887ff93699d38bf54d0714f08f65\
+     cb63396a4a339707ca37ebfe50140f9c8bcf8ab3f845ead69669c0e6234d1748\
+     3723d01f52a47f352e184887f09cf04b0e0078125a5a223dec641f0961545aea"),
 
-        test_data_6: (ScryptKDFOptions {
-            log_n: 15,
-            r: 8,
-            p: 1,
-            iterations: 10,
-            keysize: 128
-        }, "salt", "test",
-        "d6fd2f35ef5240b780f993ab60401853a9f223fcc4698eeaa25f9b92345ac22b\
-         37cdb3aa3232e9f1a684d7151dd37f97d71f7e491e66a4927323d74f14d7270e\
-         7a7c78b3d5cdabf8893d7caa1e8c4857aa75487476f7fbf3745dd71070e15e14\
-         be640bd364935fb173c097fbbc5e5e0b4dae4b81ba6ba5a0534818aea029af63"),
+    test_data_6: (ScryptKDFOptions {
+        log_n: 15,
+        r: 8,
+        p: 1,
+        iterations: 10,
+        keysize: 128
+    }, "salt", "test",
+    "d6fd2f35ef5240b780f993ab60401853a9f223fcc4698eeaa25f9b92345ac22b\
+     37cdb3aa3232e9f1a684d7151dd37f97d71f7e491e66a4927323d74f14d7270e\
+     7a7c78b3d5cdabf8893d7caa1e8c4857aa75487476f7fbf3745dd71070e15e14\
+     be640bd364935fb173c097fbbc5e5e0b4dae4b81ba6ba5a0534818aea029af63"),
 
-        test_data_7: (ScryptKDFOptions {
-            log_n: 15,
-            r: 8,
-            p: 1,
-            iterations: 10,
-            keysize: 128
-        }, "salt2", "test",
-        "b24e225031bd88ff836b82a361abcf2c1f6e937938dad79403deeff75b7f11e9\
-         2c314baca202625239f1f3ff0223c543332c277019777da3c2b5a36514e1ab41\
-         0ec25752e438e702b0a3ce7ee3906485d51e913d6c06621ac324b08a504077d7\
-         6557833781dac6753f10268b22ed01fc12094c0d7aadf5be1a4937c63ce0d80c"),
+    test_data_7: (ScryptKDFOptions {
+        log_n: 15,
+        r: 8,
+        p: 1,
+        iterations: 10,
+        keysize: 128
+    }, "salt2", "test",
+    "b24e225031bd88ff836b82a361abcf2c1f6e937938dad79403deeff75b7f11e9\
+     2c314baca202625239f1f3ff0223c543332c277019777da3c2b5a36514e1ab41\
+     0ec25752e438e702b0a3ce7ee3906485d51e913d6c06621ac324b08a504077d7\
+     6557833781dac6753f10268b22ed01fc12094c0d7aadf5be1a4937c63ce0d80c"),
 
-        test_data_8: (ScryptKDFOptions {
-            log_n: 15,
-            r: 8,
-            p: 1,
-            iterations: 10,
-            keysize: 128
-        }, "salt", "test2",
-        "2bcaf7caa9fbc6b9ac7ce88ac95612ac1c994c8a1b3f87ef826fea09cc4ca663\
-         2bb41944028b52208004eb14904481a8bca5f6b20e49f130b0f58340f8313e26\
-         df302dd797107610b222e7769a5afb6eef11cb27b9240eceeb1d2a29628d8d10\
-         5e32d5e7b84edd951b85f4b3e04651574e9e000f09b076bbce3781383892b708"),
+    test_data_8: (ScryptKDFOptions {
+        log_n: 15,
+        r: 8,
+        p: 1,
+        iterations: 10,
+        keysize: 128
+    }, "salt", "test2",
+    "2bcaf7caa9fbc6b9ac7ce88ac95612ac1c994c8a1b3f87ef826fea09cc4ca663\
+     2bb41944028b52208004eb14904481a8bca5f6b20e49f130b0f58340f8313e26\
+     df302dd797107610b222e7769a5afb6eef11cb27b9240eceeb1d2a29628d8d10\
+     5e32d5e7b84edd951b85f4b3e04651574e9e000f09b076bbce3781383892b708"),
     }
 }

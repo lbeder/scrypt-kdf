@@ -1,18 +1,24 @@
-extern crate getopts;
-extern crate pbr;
-extern crate hex;
 extern crate crossterm;
+extern crate getopts;
+extern crate hex;
+extern crate pbr;
 
 mod scrypt_kdf;
 
-use std::env;
-use std::path::Path;
-use std::process::exit;
-use std::time::{Duration, Instant};
+use crossterm::{
+    input,
+    style::{style, Color},
+    terminal::terminal,
+};
 use getopts::Options;
-use pbr::ProgressBar;
 use humantime::format_duration;
-use crossterm::{terminal::{terminal}, input, style::{Color, style}};
+use pbr::ProgressBar;
+use std::{
+    env,
+    path::Path,
+    process::exit,
+    time::{Duration, Instant},
+};
 
 use crate::scrypt_kdf::{ScryptKDF, ScryptKDFOptions};
 
@@ -30,16 +36,39 @@ fn print_version(program: &str) {
 fn get_options() -> Options {
     let default_options = ScryptKDF::default_options();
     let mut opts = Options::new();
-    opts.optopt("i", "iterations", &format!("set the number of required iterations (default: {})",
-        default_options.iterations), "ITER");
-    opts.optopt("n", "logn", &format!("set the log2 of the work factor (default: {})",
-        default_options.log_n), "LOGN");
-    opts.optopt("r", "blocksize", &format!("set the blocksize parameter (default: {})",
-        default_options.r), "R");
-    opts.optopt("p", "parallel", &format!("set the parallelization parameter (default: {})",
-        default_options.p), "P");
-    opts.optopt("k", "keysize", &format!("set the length of the derived (default: {})",
-        default_options.keysize), "SIZE");
+    opts.optopt(
+        "i",
+        "iterations",
+        &format!(
+            "set the number of required iterations (default: {})",
+            default_options.iterations
+        ),
+        "ITER",
+    );
+    opts.optopt(
+        "n",
+        "logn",
+        &format!("set the log2 of the work factor (default: {})", default_options.log_n),
+        "LOGN",
+    );
+    opts.optopt(
+        "r",
+        "blocksize",
+        &format!("set the blocksize parameter (default: {})", default_options.r),
+        "R",
+    );
+    opts.optopt(
+        "p",
+        "parallel",
+        &format!("set the parallelization parameter (default: {})", default_options.p),
+        "P",
+    );
+    opts.optopt(
+        "k",
+        "keysize",
+        &format!("set the length of the derived (default: {})", default_options.keysize),
+        "SIZE",
+    );
     opts.optflag("t", "test", "print test vectors");
     opts.optflag("h", "help", "print this help menu");
     opts.optflag("v", "version", "print version information");
@@ -53,8 +82,8 @@ fn parse_options() -> ScryptKDFOptions {
     let program = Path::new(&args[0]).file_name().unwrap().to_str().unwrap();
 
     let matches = match opts.parse(&args[1..]) {
-        Ok(m) => { m }
-        Err(f) => { panic!(f.to_string()) }
+        Ok(m) => m,
+        Err(f) => panic!(f.to_string()),
     };
 
     if matches.opt_present("v") {
@@ -73,28 +102,28 @@ fn parse_options() -> ScryptKDFOptions {
     }
 
     let default_options = ScryptKDF::default_options();
-
-    let iterations = matches.opt_str("i")
+    let iterations = matches
+        .opt_str("i")
         .and_then(|o| o.parse::<u32>().ok())
         .unwrap_or(default_options.iterations);
-
-    let log_n = matches.opt_str("n")
+    let log_n = matches
+        .opt_str("n")
         .and_then(|o| o.parse::<u8>().ok())
         .unwrap_or(default_options.log_n);
-
-    let r = matches.opt_str("r")
+    let r = matches
+        .opt_str("r")
         .and_then(|o| o.parse::<u32>().ok())
         .unwrap_or(default_options.r);
-
-    let p = matches.opt_str("p")
+    let p = matches
+        .opt_str("p")
         .and_then(|o| o.parse::<u32>().ok())
         .unwrap_or(default_options.p);
-
-    let keysize = matches.opt_str("k")
+    let keysize = matches
+        .opt_str("k")
         .and_then(|o| o.parse::<usize>().ok())
         .unwrap_or(default_options.keysize);
-
     let max_kdf_size = ScryptKDF::max_kdf_size();
+
     if keysize > max_kdf_size {
         println!("Keysize ({}) must be lower than {}", keysize, max_kdf_size);
         exit(-1);
@@ -135,13 +164,19 @@ fn print_test_vectors() {
     let test_vectors = ScryptKDF::test_vectors();
     let test_keys = ScryptKDF::derive_test_vectors();
     for (i, key) in test_keys.iter().enumerate() {
-        println!("Key for test vector \"{}\" is: \n{}\n", test_vectors[i].secret, hex::encode(&key as &[u8]));
+        println!(
+            "Key for test vector \"{}\" is: \n{}\n",
+            test_vectors[i].secret,
+            hex::encode(&key as &[u8])
+        );
     }
 }
 
 fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
-    println!("Deriving with settings: log_n={}, r={}, p={}, iterations={}, keysize={}", opts.log_n, opts.r, opts.p,
-        opts.iterations, opts.keysize);
+    println!(
+        "Deriving with settings: log_n={}, r={}, p={}, iterations={}, keysize={}",
+        opts.log_n, opts.r, opts.p, opts.iterations, opts.keysize
+    );
 
     let mut pb = ProgressBar::new(u64::from(opts.iterations));
     pb.show_speed = false;
@@ -154,8 +189,10 @@ fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
         pb.inc();
     });
 
-    pb.finish_println(&format!("Finished in {}\n", format_duration(Duration::new(start.elapsed().as_secs(), 0))
-        .to_string()));
+    pb.finish_println(&format!(
+        "Finished in {}\n",
+        format_duration(Duration::new(start.elapsed().as_secs(), 0)).to_string()
+    ));
 
     res
 }
@@ -169,5 +206,8 @@ fn main() {
     let key = derive(&opts, &salt, &secret);
 
     print!("Key is (please highlight to see): ");
-    println!("{}", style(hex::encode(&key as &[u8])).with(Color::Black).on(Color::Black));
+    println!(
+        "{}",
+        style(hex::encode(&key as &[u8])).with(Color::Black).on(Color::Black)
+    );
 }

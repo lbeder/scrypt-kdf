@@ -23,7 +23,7 @@ const DEFAULT_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
     keysize: 16
 };
 
-const TEST_VECTORS: &'static [&'static TestScryptKDFOptions] = &[
+const TEST_VECTORS: &[&TestScryptKDFOptions] = &[
     &TestScryptKDFOptions {
         opts: ScryptKDFOptions {
             log_n: 14,
@@ -54,7 +54,7 @@ pub struct ScryptKDF<'a> {
 
 impl<'a> ScryptKDF<'a> {
     pub fn new(opts: &ScryptKDFOptions) -> ScryptKDF {
-        ScryptKDF { opts: opts }
+        ScryptKDF { opts }
     }
 
     pub fn default_options() -> &'static ScryptKDFOptions {
@@ -79,7 +79,7 @@ impl<'a> ScryptKDF<'a> {
         results
     }
 
-    fn derive(&self, salt: &[u8], secret: &Vec<u8>) -> Vec<u8> {
+    fn derive(&self, salt: &[u8], secret: &[u8]) -> Vec<u8> {
         let mut dk = vec![0; self.opts.keysize];
         let params: ScryptParams = ScryptParams::new(self.opts.log_n, self.opts.r, self.opts.p);
         scrypt(secret, salt, &params, &mut dk);

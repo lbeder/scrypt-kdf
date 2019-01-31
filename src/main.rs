@@ -16,7 +16,7 @@ use crossterm::{terminal::{terminal}, input, style::{Color, style}};
 
 use crate::scrypt_kdf::{ScryptKDF, ScryptKDFOptions};
 
-const VERSION: &'static str = env!("CARGO_PKG_VERSION");
+const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_usage(program: &str, opts: &Options) {
     let brief = format!("Usage: {} v{} [options]", program, VERSION);
@@ -101,11 +101,11 @@ fn parse_options() -> ScryptKDFOptions {
     }
 
     ScryptKDFOptions {
-        log_n: log_n,
-        r: r,
-        p: p,
-        iterations: iterations,
-        keysize: keysize
+        log_n,
+        r,
+        p,
+        iterations,
+        keysize,
     }
 }
 
@@ -125,7 +125,7 @@ fn get_secret() -> String {
         exit(-1);
     }
 
-    String::from(pass)
+    pass
 }
 
 fn print_test_vectors() {
@@ -143,7 +143,7 @@ fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
     println!("Deriving with settings: log_n={}, r={}, p={}, iterations={}, keysize={}", opts.log_n, opts.r, opts.p,
         opts.iterations, opts.keysize);
 
-    let mut pb = ProgressBar::new(opts.iterations as u64);
+    let mut pb = ProgressBar::new(u64::from(opts.iterations));
     pb.show_speed = false;
     pb.message("Processing: ");
     pb.tick();

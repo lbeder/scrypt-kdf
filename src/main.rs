@@ -25,7 +25,7 @@ use crate::scrypt_kdf::{ScryptKDF, ScryptKDFOptions};
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_usage(program: &str, opts: &Options) {
-    let brief = format!("Usage: {} v{} [options]", program, VERSION);
+    let brief = format!("Usage: {} [options]\nVersion: {}", program, VERSION);
     println!("{}", opts.usage(&brief));
 }
 

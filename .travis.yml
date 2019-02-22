@@ -3,8 +3,8 @@ rust:
   - stable
   - nightly
 cache: cargo
-  before_script:
-    - rustup component add clippy
+before_script:
+  - rustup component add clippy
 script:
   - cargo clippy --all-targets --all-features -- -D warnings
   - cargo test --release

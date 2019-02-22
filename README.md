@@ -7,7 +7,8 @@ Scrypt Key Derivation Function in Rust
 ## Usage
 
 ```bash
-Usage: scrypt-kdf v0.3.3 [options]
+Usage: scrypt-kdf [options]
+Version: v0.3.4
 
 Options:
     -i, --iterations ITER

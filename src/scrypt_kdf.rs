@@ -53,7 +53,7 @@ pub struct ScryptKDF<'a> {
 }
 
 impl<'a> ScryptKDF<'a> {
-    pub fn new(opts: &ScryptKDFOptions) -> ScryptKDF {
+    pub fn new(opts: &'a ScryptKDFOptions) -> Self {
         ScryptKDF { opts }
     }
 
@@ -71,7 +71,7 @@ impl<'a> ScryptKDF<'a> {
 
     pub fn derive_test_vectors() -> Vec<Vec<u8>> {
         let mut results: Vec<Vec<u8>> = vec![];
-        for test_vector in ScryptKDF::test_vectors() {
+        for test_vector in Self::test_vectors() {
             let kdf = Self::new(&test_vector.opts);
             results.push(kdf.derive_key("", &test_vector.secret));
         }

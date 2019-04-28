@@ -5,11 +5,7 @@ extern crate pbr;
 
 mod scrypt_kdf;
 
-use crossterm::{
-    input,
-    style::{style, Color},
-    terminal::terminal,
-};
+use crossterm::{input, style, terminal, Color};
 use getopts::Options;
 use humantime::format_duration;
 use pbr::ProgressBar;

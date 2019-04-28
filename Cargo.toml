@@ -1,14 +1,14 @@
 [package]
 name = "scrypt-kdf"
-version = "0.3.3"
+version = "0.3.4"
 authors = ["Leonid Beder <leonid.beder@gmail.com>"]
 edition = "2018"
 
 [dependencies]
 getopts = "0.2"
-rpassword = "2.1.0"
+rpassword = "3.0.2"
 pbr = "1.0.1"
 rust-crypto = "0.2.36"
-hex = "0.3.1"
+hex = "0.3.2"
 humantime = "1.2.0"
-crossterm = "0.5.4"
+crossterm = "0.9.3"

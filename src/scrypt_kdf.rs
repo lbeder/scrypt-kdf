@@ -1,5 +1,7 @@
 use crypto::scrypt::{scrypt, ScryptParams};
 
+use std::default::Default;
+
 #[derive(PartialEq, Debug)]
 pub struct ScryptKDFOptions {
     pub log_n: u8,
@@ -15,13 +17,17 @@ pub struct TestScryptKDFOptions {
     pub secret: &'static str,
 }
 
-const DEFAULT_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
-    log_n: 20,
-    r: 8,
-    p: 1,
-    iterations: 100,
-    keysize: 16,
-};
+impl Default for ScryptKDFOptions {
+    fn default() -> Self {
+        Self {
+            log_n: 20,
+            r: 8,
+            p: 1,
+            iterations: 100,
+            keysize: 16,
+        }
+    }
+}
 
 const TEST_VECTORS: &[&TestScryptKDFOptions] = &[
     &TestScryptKDFOptions {
@@ -55,10 +61,6 @@ pub struct ScryptKDF<'a> {
 impl<'a> ScryptKDF<'a> {
     pub fn new(opts: &'a ScryptKDFOptions) -> Self {
         ScryptKDF { opts }
-    }
-
-    pub fn default_options() -> &'static ScryptKDFOptions {
-        &DEFAULT_OPTIONS
     }
 
     pub fn test_vectors() -> &'static [&'static TestScryptKDFOptions] {
@@ -106,12 +108,6 @@ impl<'a> ScryptKDF<'a> {
 #[cfg(test)]
 mod tests {
     use super::*;
-
-    #[test]
-    fn test_default_options() {
-        let default_options = ScryptKDF::default_options();
-        assert_eq!(default_options, &DEFAULT_OPTIONS);
-    }
 
     #[test]
     fn test_test_vectors() {

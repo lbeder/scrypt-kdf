@@ -30,39 +30,39 @@ fn print_version(program: &str) {
 }
 
 fn get_options() -> Options {
-    let default_options = ScryptKDF::default_options();
+    let kdf_options: ScryptKDFOptions = Default::default();
     let mut opts = Options::new();
     opts.optopt(
         "i",
         "iterations",
         &format!(
             "set the number of required iterations (default: {})",
-            default_options.iterations
+            kdf_options.iterations
         ),
         "ITER",
     );
     opts.optopt(
         "n",
         "logn",
-        &format!("set the log2 of the work factor (default: {})", default_options.log_n),
+        &format!("set the log2 of the work factor (default: {})", kdf_options.log_n),
         "LOGN",
     );
     opts.optopt(
         "r",
         "blocksize",
-        &format!("set the blocksize parameter (default: {})", default_options.r),
+        &format!("set the blocksize parameter (default: {})", kdf_options.r),
         "R",
     );
     opts.optopt(
         "p",
         "parallel",
-        &format!("set the parallelization parameter (default: {})", default_options.p),
+        &format!("set the parallelization parameter (default: {})", kdf_options.p),
         "P",
     );
     opts.optopt(
         "k",
         "keysize",
-        &format!("set the length of the derived (default: {})", default_options.keysize),
+        &format!("set the length of the derived (default: {})", kdf_options.keysize),
         "SIZE",
     );
     opts.optflag("t", "test", "print test vectors");
@@ -97,41 +97,51 @@ fn parse_options() -> ScryptKDFOptions {
         exit(0);
     }
 
-    let default_options = ScryptKDF::default_options();
-    let iterations = matches
-        .opt_str("i")
-        .and_then(|o| o.parse::<u32>().ok())
-        .unwrap_or(default_options.iterations);
-    let log_n = matches
-        .opt_str("n")
-        .and_then(|o| o.parse::<u8>().ok())
-        .unwrap_or(default_options.log_n);
-    let r = matches
-        .opt_str("r")
-        .and_then(|o| o.parse::<u32>().ok())
-        .unwrap_or(default_options.r);
-    let p = matches
-        .opt_str("p")
-        .and_then(|o| o.parse::<u32>().ok())
-        .unwrap_or(default_options.p);
-    let keysize = matches
-        .opt_str("k")
-        .and_then(|o| o.parse::<usize>().ok())
-        .unwrap_or(default_options.keysize);
+    let mut kdf_options: ScryptKDFOptions = Default::default();
+
+    if matches.opt_present("i") {
+        kdf_options.iterations = matches
+            .opt_str("i")
+            .and_then(|o| o.parse::<u32>().ok())
+            .unwrap_or(kdf_options.iterations);
+    }
+
+    if matches.opt_present("n") {
+        kdf_options.log_n = matches
+            .opt_str("n")
+            .and_then(|o| o.parse::<u8>().ok())
+            .unwrap_or(kdf_options.log_n);
+    }
+
+    if matches.opt_present("r") {
+        kdf_options.r = matches
+            .opt_str("r")
+            .and_then(|o| o.parse::<u32>().ok())
+            .unwrap_or(kdf_options.r);
+    }
+
+    if matches.opt_present("p") {
+        kdf_options.p = matches
+            .opt_str("p")
+            .and_then(|o| o.parse::<u32>().ok())
+            .unwrap_or(kdf_options.p);
+    }
+
+    if matches.opt_present("k") {
+        kdf_options.keysize = matches
+            .opt_str("k")
+            .and_then(|o| o.parse::<usize>().ok())
+            .unwrap_or(kdf_options.keysize);
+    }
+
     let max_kdf_size = ScryptKDF::max_kdf_size();
 
-    if keysize > max_kdf_size {
-        println!("Keysize ({}) must be lower than {}", keysize, max_kdf_size);
+    if kdf_options.keysize > max_kdf_size {
+        println!("Keysize ({}) must be lower than {}", kdf_options.keysize, max_kdf_size);
         exit(-1);
     }
 
-    ScryptKDFOptions {
-        log_n,
-        r,
-        p,
-        iterations,
-        keysize,
-    }
+    kdf_options
 }
 
 fn get_salt() -> String {

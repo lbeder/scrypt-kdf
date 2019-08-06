@@ -1,12 +1,13 @@
 language: rust
 rust:
   - stable
-  - nightly
+  - nightly-2019-02-08
 cache: cargo
 before_script:
   - |
       if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
-        rustup component add clippy --toolchain nightly-x86_64-unknown-linux-gnu
+        rustup toolchain add nightly-2019-02-08
+        rustup component add --toolchain nightly-2019-02-08 clippy
       else
         rustup component add clippy
       fi

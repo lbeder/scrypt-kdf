@@ -4,6 +4,8 @@ rust:
   - nightly-2019-02-08
 cache: cargo
 before_script:
+  - cargo install --force cargo-audit
+  - cargo generate-lockfile
   - |
       if [[ "$TRAVIS_RUST_VERSION" == "nightly" ]]; then
         rustup toolchain add nightly-2019-02-08
@@ -12,5 +14,6 @@ before_script:
         rustup component add clippy
       fi
 script:
+  - cargo audit
   - cargo clippy --all-targets --all-features -- -D warnings
   - cargo test --release

@@ -4,6 +4,9 @@ VERSION=$(cargo pkgid | cut -d# -f2 | cut -d: -f2)
 
 rm -rf target/*.tgz target/*.tgz.asc target/release.md
 
+echo "Running audit..."
+cargo audit
+
 echo "Running clippy..."
 cargo clippy --all-targets --all-features -- -D warnings
 

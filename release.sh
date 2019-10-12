@@ -2,33 +2,27 @@
 
 VERSION=$(cargo pkgid | cut -d# -f2 | cut -d: -f2)
 
-rm -rf target/*.tgz target/*.tgz.asc target/release.md
+./build.sh
 
-echo "Running audit..."
-cargo audit
+rm -rf target/*.tgz target/*.tgz.sig target/release.md
 
-echo "Running clippy..."
-cargo clippy --all-targets --all-features -- -D warnings
-
-echo "Running tests..."
-cargo test --release
-
-echo "Building v${VERSION} for Mac OS..."
-APPLE_RELEASE="target/scrypt-kdf-${VERSION}-osx.tgz"
-cargo build --release --target=x86_64-apple-darwin
+echo "Creating v${VERSION} bundle for Mac OS..."
+APPLE_TARGET="scrypt-kdf-${VERSION}-osx.tgz"
+APPLE_TARGET_SIG=${APPLE_TARGET}.sig
+APPLE_RELEASE="target/${APPLE_TARGET}"
+APPLE_RELEASE_SIG=${APPLE_RELEASE}.sig
 tar zcvf ${APPLE_RELEASE} target/x86_64-apple-darwin/release/scrypt-kdf
 APPLE_RELEASE_SHA512=$(shasum -a512 ${APPLE_RELEASE})
-APPLE_RELEASE_ASC=${APPLE_RELEASE}.asc
+gpg --output ${APPLE_RELEASE_SIG} --detach-sig ${APPLE_RELEASE}
 
-echo "Building v${VERSION} for Linux AMD64..."
-LINUX_RELEASE="target/scrypt-kdf-${VERSION}-linux-amd64.tgz"
-CROSS_COMPILE=x86_64-linux-musl- cargo build --release --target=x86_64-unknown-linux-musl
+echo "Creating v${VERSION} bundle for Linux AMD64..."
+LINUX_TARGET="scrypt-kdf-${VERSION}-linux-amd64.tgz"
+LINUX_TARGET_SIG=${LINUX_TARGET}.sig
+LINUX_RELEASE="target/${LINUX_TARGET}"
+LINUX_RELEASE_SIG=${LINUX_RELEASE}.sig
 tar zcvf ${LINUX_RELEASE} target/x86_64-unknown-linux-musl/release/scrypt-kdf
 LINUX_RELEASE_SHA512=$(shasum -a512 ${LINUX_RELEASE})
-LINUX_RELEASE_ASC=${LINUX_RELEASE}.asc
-
-keybase pgp sign --clearsign -m "${APPLE_RELEASE_SHA512}" > ${APPLE_RELEASE_ASC}
-keybase pgp sign --clearsign -m "${LINUX_RELEASE_SHA512}" > ${LINUX_RELEASE_ASC}
+gpg --output ${LINUX_RELEASE_SIG} --detach-sig ${LINUX_RELEASE}
 
 RELEASE_NOTES="target/release.md"
 echo "Preparing release notes..."
@@ -46,7 +40,9 @@ shasum -a512 ${APPLE_RELEASE} ${APPLE_RELEASE_SHA512}
 
 ### Digital Signature
 
-$(cat ${APPLE_RELEASE_ASC})
+\`\`\`bash
+gpg --verify ${APPLE_TARGET_SIG} ${APPLE_TARGET}
+\`\`\`
 
 ## Linux AMD64
 
@@ -58,5 +54,8 @@ shasum -a512 ${LINUX_RELEASE} ${LINUX_RELEASE_SHA512}
 
 ### Digital Signature
 
-$(cat ${LINUX_RELEASE_ASC})
+\`\`\`bash
+gpg --verify ${LINUX_TARGET_SIG} ${LINUX_TARGET}
+\`\`\`
+
 EOF

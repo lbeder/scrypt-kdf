@@ -9,7 +9,7 @@ echo "Running clippy..."
 cargo clippy --all-targets --all-features -- -D warnings
 
 echo "Running tests..."
-#cargo test --release
+cargo test --release
 
 echo "Building v${VERSION} for Mac OS..."
 cargo build --release --target=x86_64-apple-darwin

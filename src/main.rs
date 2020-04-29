@@ -162,8 +162,9 @@ fn read_line() -> Result<String> {
         }
     }
 
-    return Ok(line);
+    Ok(line)
 }
+
 fn get_salt() -> String {
     print!("Enter your salt: ");
     read_line().unwrap()

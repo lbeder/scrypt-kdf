@@ -5,9 +5,9 @@ extern crate pbr;
 
 mod scrypt_kdf;
 
-use crossterm::style::{style, Color};
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent},
+    style::{style, Color},
     Result,
 };
 use getopts::Options;
@@ -154,11 +154,11 @@ fn read_line() -> Result<String> {
         match code {
             KeyCode::Enter => {
                 break;
-            }
+            },
             KeyCode::Char(c) => {
                 line.push(c);
-            }
-            _ => {}
+            },
+            _ => {},
         }
     }
 

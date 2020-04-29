@@ -15,6 +15,7 @@ use humantime::format_duration;
 use pbr::ProgressBar;
 use std::{
     env,
+    io::{self, Write},
     path::Path,
     process::exit,
     time::{Duration, Instant},
@@ -167,6 +168,7 @@ fn read_line() -> Result<String> {
 
 fn get_salt() -> String {
     print!("Enter your salt: ");
+    io::stdout().flush().unwrap();
     read_line().unwrap()
 }
 

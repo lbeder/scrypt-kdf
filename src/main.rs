@@ -5,12 +5,17 @@ extern crate pbr;
 
 mod scrypt_kdf;
 
-use crossterm::{input, style, terminal, Color};
+use crossterm::{
+    event::{self, Event, KeyCode, KeyEvent},
+    style::{style, Color},
+    Result,
+};
 use getopts::Options;
 use humantime::format_duration;
 use pbr::ProgressBar;
 use std::{
     env,
+    io::{self, Write},
     path::Path,
     process::exit,
     time::{Duration, Instant},
@@ -144,9 +149,27 @@ fn parse_options() -> ScryptKDFOptions {
     kdf_options
 }
 
+fn read_line() -> Result<String> {
+    let mut line = String::new();
+    while let Event::Key(KeyEvent { code, .. }) = event::read()? {
+        match code {
+            KeyCode::Enter => {
+                break;
+            },
+            KeyCode::Char(c) => {
+                line.push(c);
+            },
+            _ => {},
+        }
+    }
+
+    Ok(line)
+}
+
 fn get_salt() -> String {
-    terminal().write("Enter your salt: ").unwrap();
-    input().read_line().unwrap()
+    print!("Enter your salt: ");
+    io::stdout().flush().unwrap();
+    read_line().unwrap()
 }
 
 fn get_secret() -> String {

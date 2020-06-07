@@ -30,10 +30,6 @@ fn print_usage(program: &str, opts: &Options) {
     println!("{}", opts.usage(&brief));
 }
 
-fn print_version(program: &str) {
-    println!("{} v{}", program, VERSION);
-}
-
 fn get_options() -> Options {
     let kdf_options: ScryptKDFOptions = Default::default();
     let mut opts = Options::new();
@@ -86,11 +82,6 @@ fn parse_options() -> ScryptKDFOptions {
         Ok(m) => m,
         Err(f) => panic!(f.to_string()),
     };
-
-    if matches.opt_present("v") {
-        print_version(&program);
-        exit(0);
-    }
 
     if matches.opt_present("h") {
         print_usage(&program, &opts);
@@ -155,11 +146,11 @@ fn read_line() -> Result<String> {
         match code {
             KeyCode::Enter => {
                 break;
-            },
+            }
             KeyCode::Char(c) => {
                 line.push(c);
-            },
-            _ => {},
+            }
+            _ => {}
         }
     }
 
@@ -187,12 +178,17 @@ fn get_secret() -> String {
 }
 
 fn print_test_vectors() {
-    println!("Printing test vectors...");
-    println!();
+    println!("Printing test vectors...\n");
 
     let test_vectors = ScryptKDF::test_vectors();
     let test_keys = ScryptKDF::derive_test_vectors();
     for (i, key) in test_keys.iter().enumerate() {
+        let opts = &test_vectors[i].opts;
+        println!(
+            "Deriving with settings:\n    CPU/memory cost parameter (log(N)): {}\n    Parallelization parameter (P): {}\n    Block size parameter (R): {}\n    Iterations: {}\n    Key size: {}\n",
+            opts.log_n, opts.r, opts.p, opts.iterations, opts.keysize
+        );
+
         println!(
             "Key for test vector \"{}\" is: \n{}\n",
             test_vectors[i].secret,
@@ -202,11 +198,6 @@ fn print_test_vectors() {
 }
 
 fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
-    println!(
-        "Deriving with settings: log_n={}, r={}, p={}, iterations={}, keysize={}",
-        opts.log_n, opts.r, opts.p, opts.iterations, opts.keysize
-    );
-
     let mut pb = ProgressBar::new(u64::from(opts.iterations));
     pb.show_speed = false;
     pb.message("Processing: ");
@@ -227,7 +218,14 @@ fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
 }
 
 fn main() {
+    println!("Scrypt KDF v{}\n", VERSION);
+
     let opts = parse_options();
+
+    println!(
+        "Deriving with settings:\n    CPU/memory cost parameter (log(N)): {}\n    Parallelization parameter (P): {}\n    Block size parameter (R): {}\n    Iterations: {}\n    Key size: {}\n",
+        opts.log_n, opts.r, opts.p, opts.iterations, opts.keysize
+    );
 
     let salt = get_salt();
     let secret = get_secret();

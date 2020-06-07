@@ -65,15 +65,22 @@ Let's try to derive the key for the secret `test`, using the salt `salt`:
 
 > ./target/release/scrypt-kdf
 
-Progress status:
-
 ```bash
+Enter your
+Scrypt KDF v0.5.1
+
+Deriving with settings:
+    CPU/memory cost parameter (log(N)): 20
+    Parallelization parameter (P): 8
+    Block size parameter (R): 1
+    Iterations: 100
+    Key size: 16
+
 Enter your salt: salt
 Enter your secret: 🔑
 Enter your secret again: 🔑
 
-Deriving with settings: log_n=20, r=8, p=1, iterations=100, keysize=16
-Processing: 3 / 100 [======>-----------------------------------------------------------------------------------------------------] 6.00 % 7m
+Processing: 12 / 100 [==============>--------------------------------------------------------------------------------------------------------------] 12.00 % 4m
 ```
 
 Final result:
@@ -83,7 +90,6 @@ Enter your salt: salt
 Enter your secret: 🔑
 Enter your secret again: 🔑
 
-Deriving with settings: log_n=20, r=8, p=1, iterations=100, keysize=16
 Processing: 100 / 100 [=======================================================================================================================================] 100.00 %
 Finished in 5m 6s
 Key is (please highlight to see): ff08101f061aa670158601bf5be5efa6
@@ -120,17 +126,27 @@ Test vectors:
 Results should be:
 
 ```bash
+Scrypt KDF v0.5.1
+
 Printing test vectors...
 
-Deriving with settings: log_n=14, r=8, p=1, iterations=1, keysize=128
-Processing: 1 / 1 [=============================================================================================================] 100.00 %
-Finished in 4s
+Deriving with settings:
+    CPU/memory cost parameter (log(N)): 14
+    Parallelization parameter (P): 8
+    Block size parameter (R): 1
+    Iterations: 1
+    Key size: 128
+
 Key for test vector "" is:
 d72c87d0f077c7766f2985dfab30e8955c373a13a1e93d315203939f542ff86e73ee37c31f4c4b571f4719fa8e3589f12db8dcb57ea9f56764bb7d58f64cf705f1f64bdd91c35da954a6fb7896f1839e6ba03f68f08b686527f9f1588ab103c22152046258e2d679842252afeb3cd6eb4e01fe9c285eb916da7e4b7a39ee5eba
 
-Deriving with settings: log_n=14, r=8, p=1, iterations=3, keysize=128
-Processing: 3 / 3 [=============================================================================================================] 100.00 %
-Finished in 14s
+Deriving with settings:
+    CPU/memory cost parameter (log(N)): 14
+    Parallelization parameter (P): 8
+    Block size parameter (R): 1
+    Iterations: 3
+    Key size: 128
+
 Key for test vector "Hello World" is:
 38f3b062f703aa0c958fc8944c9f005f1bd03a056048d5cdc6186979e4c178504050580fab8744c0272253f7df87a2e2f9bb5449a2361f0fed5105ea549e86e41f68d8b160cda5ca91e020067b0c53fc20ae19993e1f40db60d8963ec8c7c0fe74d48a44f1f78a4259f0376f6d7dd2c07d2e7aaae023b8bdfa87ddbf503fe9a3
 ```

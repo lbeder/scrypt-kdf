@@ -44,9 +44,9 @@ fn get_options() -> Options {
     );
     opts.optopt(
         "n",
-        "logn",
+        "workFactor",
         &format!("set the work factor (default: {})", kdf_options.n),
-        "LOGN",
+        "N",
     );
     opts.optopt(
         "r",

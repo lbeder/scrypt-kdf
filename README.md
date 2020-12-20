@@ -13,7 +13,7 @@ Version: v0.6.0
 Options:
     -i, --iterations ITER
                         set the number of required iterations (default: 100)
-    -n, --logn LOGN     set the work factor (default: 1048576)
+    -n, --workFactor N  set the work factor (default: 1048576)
     -r, --blocksize R   set the blocksize parameter (default: 8)
     -p, --parallel P    set the parallelization parameter (default: 1)
     -k, --keysize SIZE  set the length of the derived (default: 16)

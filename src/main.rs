@@ -185,7 +185,7 @@ fn print_test_vectors() {
     for (i, key) in test_keys.iter().enumerate() {
         let opts = &test_vectors[i].opts;
         println!(
-            "Deriving with settings:\n    CPU/memory cost parameter (log(N)): {}\n    Parallelization parameter (P): {}\n    Block size parameter (R): {}\n    Iterations: {}\n    Key size: {}\n",
+            "Deriving with settings:\n    CPU/memory cost parameter (N): {}\n    Parallelization parameter (P): {}\n    Block size parameter (R): {}\n    Iterations: {}\n    Key size: {}\n",
             opts.n, opts.r, opts.p, opts.iterations, opts.keysize
         );
 

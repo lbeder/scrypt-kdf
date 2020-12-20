@@ -45,7 +45,7 @@ fn get_options() -> Options {
     opts.optopt(
         "n",
         "logn",
-        &format!("set the log2 of the work factor (default: {})", kdf_options.log_n),
+        &format!("set the work factor (default: {})", kdf_options.n),
         "LOGN",
     );
     opts.optopt(
@@ -103,10 +103,10 @@ fn parse_options() -> ScryptKDFOptions {
     }
 
     if matches.opt_present("n") {
-        kdf_options.log_n = matches
+        kdf_options.n = matches
             .opt_str("n")
-            .and_then(|o| o.parse::<u8>().ok())
-            .unwrap_or(kdf_options.log_n);
+            .and_then(|o| o.parse::<u64>().ok())
+            .unwrap_or(kdf_options.n);
     }
 
     if matches.opt_present("r") {
@@ -185,8 +185,8 @@ fn print_test_vectors() {
     for (i, key) in test_keys.iter().enumerate() {
         let opts = &test_vectors[i].opts;
         println!(
-            "Deriving with settings:\n    CPU/memory cost parameter (log(N)): {}\n    Parallelization parameter (P): {}\n    Block size parameter (R): {}\n    Iterations: {}\n    Key size: {}\n",
-            opts.log_n, opts.r, opts.p, opts.iterations, opts.keysize
+            "Deriving with settings:\n    CPU/memory cost parameter (N): {}\n    Parallelization parameter (P): {}\n    Block size parameter (R): {}\n    Iterations: {}\n    Key size: {}\n",
+            opts.n, opts.r, opts.p, opts.iterations, opts.keysize
         );
 
         println!(
@@ -224,7 +224,7 @@ fn main() {
 
     println!(
         "Deriving with settings:\n    CPU/memory cost parameter (log(N)): {}\n    Parallelization parameter (P): {}\n    Block size parameter (R): {}\n    Iterations: {}\n    Key size: {}\n",
-        opts.log_n, opts.r, opts.p, opts.iterations, opts.keysize
+        opts.n, opts.r, opts.p, opts.iterations, opts.keysize
     );
 
     let salt = get_salt();

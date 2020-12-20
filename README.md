@@ -8,12 +8,12 @@ Scrypt Key Derivation Function in Rust
 
 ```bash
 Usage: scrypt-kdf [options]
-Version: v0.3.4
+Version: v0.6.0
 
 Options:
     -i, --iterations ITER
                         set the number of required iterations (default: 100)
-    -n, --logn LOGN     set the log2 of the work factor (default: 20)
+    -n, --logn LOGN     set the work factor (default: 1048576)
     -r, --blocksize R   set the blocksize parameter (default: 8)
     -p, --parallel P    set the parallelization parameter (default: 1)
     -k, --keysize SIZE  set the length of the derived (default: 16)
@@ -67,10 +67,10 @@ Let's try to derive the key for the secret `test`, using the salt `salt`:
 
 ```bash
 Enter your
-Scrypt KDF v0.5.1
+Scrypt KDF v0.6.0
 
 Deriving with settings:
-    CPU/memory cost parameter (log(N)): 20
+    CPU/memory cost parameter (N): 1048576
     Parallelization parameter (P): 8
     Block size parameter (R): 1
     Iterations: 100
@@ -106,7 +106,7 @@ Test vectors:
 * Secret: "" (the empty string)
 * Salt: empty
 * Parameters:
-  * Log N: 14
+  * N: 16384
   * R: 8
   * P: 1
   * Key size: 128
@@ -117,7 +117,7 @@ Test vectors:
 * Secret: "Hello World"
 * Salt: empty
 * Parameters:
-  * Log N: 14
+  * N: 16384
   * R: 8
   * P: 1
   * Key size: 128
@@ -126,12 +126,12 @@ Test vectors:
 Results should be:
 
 ```bash
-Scrypt KDF v0.5.1
+Scrypt KDF v0.6.0
 
 Printing test vectors...
 
 Deriving with settings:
-    CPU/memory cost parameter (log(N)): 14
+    CPU/memory cost parameter (N): 16384
     Parallelization parameter (P): 8
     Block size parameter (R): 1
     Iterations: 1
@@ -141,7 +141,7 @@ Key for test vector "" is:
 d72c87d0f077c7766f2985dfab30e8955c373a13a1e93d315203939f542ff86e73ee37c31f4c4b571f4719fa8e3589f12db8dcb57ea9f56764bb7d58f64cf705f1f64bdd91c35da954a6fb7896f1839e6ba03f68f08b686527f9f1588ab103c22152046258e2d679842252afeb3cd6eb4e01fe9c285eb916da7e4b7a39ee5eba
 
 Deriving with settings:
-    CPU/memory cost parameter (log(N)): 14
+    CPU/memory cost parameter (N): 14
     Parallelization parameter (P): 8
     Block size parameter (R): 1
     Iterations: 3

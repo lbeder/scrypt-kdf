@@ -85,12 +85,6 @@ impl<'a> ScryptKDF<'a> {
     fn derive(&self, salt: &[u8], secret: &[u8]) -> Vec<u8> {
         let mut dk = vec![0; self.opts.keysize];
 
-        // // scrypt(secret, salt, &params, &mut dk);
-        // println!("secret {:?}", &secret);
-        // println!("secret.len() {}", secret.len());
-        // println!("salt {:?}", &salt);
-        // println!("salt.len() {}", salt.len());
-
         let res = unsafe {
             crypto_pwhash_scryptsalsa208sha256_ll(
                 secret.as_ptr(),

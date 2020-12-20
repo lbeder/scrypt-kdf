@@ -1,10 +1,11 @@
-use crypto::scrypt::{scrypt, ScryptParams};
+use libsodium_sys::crypto_pwhash_scryptsalsa208sha256_ll;
+use libc::{size_t};
 
 use std::default::Default;
 
 #[derive(PartialEq, Debug)]
 pub struct ScryptKDFOptions {
-    pub log_n: u8,
+    pub n: u64,
     pub r: u32,
     pub p: u32,
     pub iterations: u32,
@@ -20,7 +21,7 @@ pub struct TestScryptKDFOptions {
 impl Default for ScryptKDFOptions {
     fn default() -> Self {
         Self {
-            log_n: 20,
+            n: 1048576,
             r: 8,
             p: 1,
             iterations: 100,
@@ -32,7 +33,7 @@ impl Default for ScryptKDFOptions {
 const TEST_VECTORS: &[&TestScryptKDFOptions] = &[
     &TestScryptKDFOptions {
         opts: ScryptKDFOptions {
-            log_n: 14,
+            n: 16384,
             r: 8,
             p: 1,
             iterations: 1,
@@ -42,7 +43,7 @@ const TEST_VECTORS: &[&TestScryptKDFOptions] = &[
     },
     &TestScryptKDFOptions {
         opts: ScryptKDFOptions {
-            log_n: 14,
+            n: 16384,
             r: 8,
             p: 1,
             iterations: 3,
@@ -83,8 +84,27 @@ impl<'a> ScryptKDF<'a> {
 
     fn derive(&self, salt: &[u8], secret: &[u8]) -> Vec<u8> {
         let mut dk = vec![0; self.opts.keysize];
-        let params: ScryptParams = ScryptParams::new(self.opts.log_n, self.opts.r, self.opts.p);
-        scrypt(secret, salt, &params, &mut dk);
+
+        // // scrypt(secret, salt, &params, &mut dk);
+        // println!("secret {:?}", &secret);
+        // println!("secret.len() {}", secret.len());
+        // println!("salt {:?}", &salt);
+        // println!("salt.len() {}", salt.len());
+
+        let res = unsafe {
+            crypto_pwhash_scryptsalsa208sha256_ll(
+                secret.as_ptr(),
+                secret.len() as size_t,
+                salt.as_ptr(),
+                salt.len() as size_t,
+                self.opts.n as u64,
+                self.opts.r,
+                self.opts.p,
+                dk.as_mut_ptr(),
+                dk.len() as size_t)
+        };
+
+        assert!(res == 0, format!("crypto_pwhash_scryptsalsa208sha256_ll has failed with {}", &res));
 
         dk.to_vec()
     }
@@ -144,7 +164,7 @@ mod tests {
 
     derive_tests! {
     test_data_0: (ScryptKDFOptions {
-        log_n: 14,
+        n: 16384,
         r: 8,
         p: 1,
         iterations: 1,
@@ -156,7 +176,7 @@ mod tests {
      fd9c2ed0aaa89cedde6b18a9351645cf4006531e637d8cab49f61a451f3f16a6"),
 
     test_data_1: (ScryptKDFOptions {
-        log_n: 12,
+        n: 4096,
         r: 8,
         p: 1,
         iterations: 10,
@@ -165,7 +185,7 @@ mod tests {
     "e419dac917d02f544469a5164c797ed0066cea15568958f6acc58411df5ac17e"),
 
     test_data_2: (ScryptKDFOptions {
-        log_n: 20,
+        n: 1048576,
         r: 8,
         p: 1,
         iterations: 4,
@@ -175,7 +195,7 @@ mod tests {
      7fb4d48442e54c8a28ac1d02298cdd793618827755ca69704b6cb9ec2b1e2f8e"),
 
     test_data_3: (ScryptKDFOptions {
-        log_n: 15,
+        n: 32768,
         r: 8,
         p: 1,
         iterations: 4,
@@ -185,7 +205,7 @@ mod tests {
      a5bf684aaf2aceb4fbc2eef11f4f9ac71b837b68797dc9c19062653b3e96664a"),
 
     test_data_4: (ScryptKDFOptions {
-        log_n: 15,
+        n: 32768,
         r: 8,
         p: 1,
         iterations: 4,
@@ -195,7 +215,7 @@ mod tests {
      c8fccbfc9d9de76a133218b7220da069430f40c58ef4bc53c639d5ea72b4437a"),
 
     test_data_5: (ScryptKDFOptions {
-        log_n: 15,
+        n: 32768,
         r: 8,
         p: 1,
         iterations: 4,
@@ -207,7 +227,7 @@ mod tests {
      3723d01f52a47f352e184887f09cf04b0e0078125a5a223dec641f0961545aea"),
 
     test_data_6: (ScryptKDFOptions {
-        log_n: 15,
+        n: 32768,
         r: 8,
         p: 1,
         iterations: 10,
@@ -219,7 +239,7 @@ mod tests {
      be640bd364935fb173c097fbbc5e5e0b4dae4b81ba6ba5a0534818aea029af63"),
 
     test_data_7: (ScryptKDFOptions {
-        log_n: 15,
+        n: 32768,
         r: 8,
         p: 1,
         iterations: 10,
@@ -231,7 +251,7 @@ mod tests {
      6557833781dac6753f10268b22ed01fc12094c0d7aadf5be1a4937c63ce0d80c"),
 
     test_data_8: (ScryptKDFOptions {
-        log_n: 15,
+        n: 32768,
         r: 8,
         p: 1,
         iterations: 10,

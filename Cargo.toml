@@ -1,14 +1,15 @@
 [package]
 name = "scrypt-kdf"
-version = "0.5.1"
+version = "0.6.0"
 authors = ["Leonid Beder <leonid.beder@gmail.com>"]
 edition = "2018"
 
 [dependencies]
 getopts = "0.2.21"
-rpassword = "4.0.5"
+rpassword = "5.0.0"
 pbr = "1.0.3"
-rust-crypto = "0.2.36"
 hex = "0.4.2"
-humantime = "2.0.0"
-crossterm = "0.17.5"
+humantime = "2.0.1"
+crossterm = "0.18.2"
+libc = "0.2.81"
+libsodium-sys-stable = "1.19.12"

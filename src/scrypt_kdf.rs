@@ -98,7 +98,7 @@ impl<'a> ScryptKDF<'a> {
                 dk.len() as size_t)
         };
 
-        assert!(res == 0, format!("crypto_pwhash_scryptsalsa208sha256_ll has failed with {}", &res));
+        assert!(res == 0, "crypto_pwhash_scryptsalsa208sha256_ll has failed with {}", &res);
 
         dk.to_vec()
     }

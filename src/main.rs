@@ -7,7 +7,7 @@ mod scrypt_kdf;
 
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent},
-    style::{style, Color},
+    style::{style, Color, Stylize},
     Result,
 };
 use getopts::Options;
@@ -80,7 +80,7 @@ fn parse_options() -> ScryptKDFOptions {
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
-        Err(f) => panic!(f.to_string()),
+        Err(f) => panic!("{}", f.to_string()),
     };
 
     if matches.opt_present("h") {

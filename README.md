@@ -8,7 +8,7 @@ Scrypt Key Derivation Function in Rust
 
 ```bash
 Usage: scrypt-kdf [options]
-Version: v0.6.0
+Version: v0.7.0
 
 Options:
     -i, --iterations ITER
@@ -67,7 +67,7 @@ Let's try to derive the key for the secret `test`, using the salt `salt`:
 
 ```bash
 Enter your
-Scrypt KDF v0.6.0
+Scrypt KDF v7.0
 
 Deriving with settings:
     CPU/memory cost parameter (N): 1048576
@@ -126,7 +126,7 @@ Test vectors:
 Results should be:
 
 ```bash
-Scrypt KDF v0.6.0
+Scrypt KDF v0.7.0
 
 Printing test vectors...
 

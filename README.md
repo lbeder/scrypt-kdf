@@ -67,7 +67,7 @@ Let's try to derive the key for the secret `test`, using the salt `salt`:
 
 ```bash
 Enter your
-Scrypt KDF v7.0
+Scrypt KDF v0.7.0
 
 Deriving with settings:
     CPU/memory cost parameter (N): 1048576

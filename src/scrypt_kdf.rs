@@ -65,7 +65,7 @@ impl<'a> ScryptKDF<'a> {
     }
 
     pub fn test_vectors() -> &'static [&'static TestScryptKDFOptions] {
-        &TEST_VECTORS
+        TEST_VECTORS
     }
 
     pub fn max_kdf_size() -> usize {
@@ -76,7 +76,7 @@ impl<'a> ScryptKDF<'a> {
         let mut results: Vec<Vec<u8>> = vec![];
         for test_vector in Self::test_vectors() {
             let kdf = Self::new(&test_vector.opts);
-            results.push(kdf.derive_key("", &test_vector.secret));
+            results.push(kdf.derive_key("", test_vector.secret));
         }
 
         results

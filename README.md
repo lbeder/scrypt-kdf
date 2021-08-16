@@ -1,6 +1,6 @@
 # scrypt-kdf
 
-[![Build Status](https://travis-ci.com/lbeder/scrypt-kdf.svg?branch=master)](https://travis-ci.com/lbeder/scrypt-kdf)
+[![Build Status](https://github.com/lbeder/scrypt-kdf/contracts/actions/workflows/ci.yml/badge.svg)](https://github.com/lbeder/scrypt-kdf/contracts/actions/workflows/ci.yml)
 
 Scrypt Key Derivation Function in Rust
 

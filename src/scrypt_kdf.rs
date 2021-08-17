@@ -65,7 +65,7 @@ impl<'a> ScryptKDF<'a> {
     }
 
     pub fn test_vectors() -> &'static [&'static TestScryptKDFOptions] {
-        &TEST_VECTORS
+        TEST_VECTORS
     }
 
     pub fn max_kdf_size() -> usize {
@@ -76,7 +76,7 @@ impl<'a> ScryptKDF<'a> {
         let mut results: Vec<Vec<u8>> = vec![];
         for test_vector in Self::test_vectors() {
             let kdf = Self::new(&test_vector.opts);
-            results.push(kdf.derive_key("", &test_vector.secret));
+            results.push(kdf.derive_key("", test_vector.secret));
         }
 
         results
@@ -98,7 +98,7 @@ impl<'a> ScryptKDF<'a> {
                 dk.len() as size_t)
         };
 
-        assert!(res == 0, format!("crypto_pwhash_scryptsalsa208sha256_ll has failed with {}", &res));
+        assert!(res == 0, "crypto_pwhash_scryptsalsa208sha256_ll has failed with {}", &res);
 
         dk.to_vec()
     }

@@ -7,7 +7,7 @@ mod scrypt_kdf;
 
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent},
-    style::{style, Color},
+    style::{style, Color, Stylize},
     Result,
 };
 use getopts::Options;
@@ -80,11 +80,11 @@ fn parse_options() -> ScryptKDFOptions {
 
     let matches = match opts.parse(&args[1..]) {
         Ok(m) => m,
-        Err(f) => panic!(f.to_string()),
+        Err(f) => panic!("{}", f.to_string()),
     };
 
     if matches.opt_present("h") {
-        print_usage(&program, &opts);
+        print_usage(program, &opts);
         exit(0);
     }
 
@@ -192,7 +192,7 @@ fn print_test_vectors() {
         println!(
             "Key for test vector \"{}\" is: \n{}\n",
             test_vectors[i].secret,
-            hex::encode(&key as &[u8])
+            hex::encode(key as &[u8])
         );
     }
 }
@@ -204,8 +204,8 @@ fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
     pb.tick();
 
     let start = Instant::now();
-    let kdf = ScryptKDF::new(&opts);
-    let res = kdf.derive_key_with_callback(&salt, &secret, || {
+    let kdf = ScryptKDF::new(opts);
+    let res = kdf.derive_key_with_callback(salt, secret, || {
         pb.inc();
     });
 

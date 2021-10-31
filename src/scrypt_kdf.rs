@@ -1,5 +1,5 @@
+use libc::size_t;
 use libsodium_sys::crypto_pwhash_scryptsalsa208sha256_ll;
-use libc::{size_t};
 
 use std::default::Default;
 
@@ -95,10 +95,15 @@ impl<'a> ScryptKDF<'a> {
                 self.opts.r,
                 self.opts.p,
                 dk.as_mut_ptr(),
-                dk.len() as size_t)
+                dk.len() as size_t,
+            )
         };
 
-        assert!(res == 0, "crypto_pwhash_scryptsalsa208sha256_ll has failed with {}", &res);
+        assert!(
+            res == 0,
+            "crypto_pwhash_scryptsalsa208sha256_ll has failed with {}",
+            &res
+        );
 
         dk.to_vec()
     }

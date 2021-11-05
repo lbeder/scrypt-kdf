@@ -47,15 +47,21 @@ Install a standard Linux target on a Mac (note, that the opposite is currently i
 rustup target add x86_64-unknown-linux-musl
 ```
 
-Use `homebrew` to download a community-provided binary for `musl` cross-compilation:
+Use `homebrew` to install a community-provided macOS cross-compiler toolchains:
 
 ```bash
-brew install FiloSottile/musl-cross/musl-cross
+brew tap messense/macos-cross-toolchains
+brew install x86_64-unknown-linux-musl
 ```
 
 Now you can build it:
 
 ```bash
+export CC_x86_64_unknown_linux_musl=x86_64-unknown-linux-musl-gcc
+export CXX_x86_64_unknown_linux_musl=x86_64-unknown-linux-musl-g++
+export AR_x86_64_unknown_linux_musl=x86_64-unknown-linux-musl-ar
+export CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=x86_64-unknown-linux-musl-gcc
+CROSS_COMPILE=x86_64-linux-musl- cargo build --target=x86_64-unknown-linux-musl
 cargo build --target=x86_64-unknown-linux-musl
 ```
 

@@ -77,8 +77,8 @@ Scrypt KDF v0.7.0
 
 Deriving with settings:
     CPU/memory cost parameter (N): 1048576
-    Parallelization parameter (P): 8
-    Block size parameter (R): 1
+    Block size parameter (R): 8
+    Parallelization parameter (P): 1
     Iterations: 100
     Key size: 16
 
@@ -138,8 +138,8 @@ Printing test vectors...
 
 Deriving with settings:
     CPU/memory cost parameter (N): 16384
-    Parallelization parameter (P): 8
-    Block size parameter (R): 1
+    Block size parameter (R): 8
+    Parallelization parameter (P): 1
     Iterations: 1
     Key size: 128
 
@@ -148,8 +148,8 @@ d72c87d0f077c7766f2985dfab30e8955c373a13a1e93d315203939f542ff86e73ee37c31f4c4b57
 
 Deriving with settings:
     CPU/memory cost parameter (N): 14
-    Parallelization parameter (P): 8
-    Block size parameter (R): 1
+    Block size parameter (R): 8
+    Parallelization parameter (P): 1
     Iterations: 3
     Key size: 128
 

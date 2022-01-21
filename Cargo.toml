@@ -1,17 +1,17 @@
 [package]
-name = "scrypt-kdf"
-version = "0.8.0"
 authors = ["Leonid Beder <leonid.beder@gmail.com>"]
 edition = "2018"
+name = "scrypt-kdf"
+version = "0.8.1"
 
 [dependencies]
+crossterm = "0.22.1"
 getopts = "0.2.21"
-rpassword = "5.0.1"
 hex = "0.4.3"
 humantime = "2.1.0"
-crossterm = "0.22.1"
 libc = "0.2.106"
 libsodium-sys-stable = "1.19.19"
+rpassword = "5.0.1"
 
 [dependencies.pbr]
 git = "https://github.com/lbeder/pb.git"

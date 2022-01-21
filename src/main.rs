@@ -211,7 +211,7 @@ fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
 
     pb.finish_println(&format!(
         "Finished in {}\n",
-        format_duration(Duration::new(start.elapsed().as_secs(), 0)).to_string()
+        format_duration(Duration::new(start.elapsed().as_secs(), 0))
     ));
 
     res

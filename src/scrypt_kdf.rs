@@ -91,7 +91,7 @@ impl<'a> ScryptKDF<'a> {
                 secret.len() as size_t,
                 salt.as_ptr(),
                 salt.len() as size_t,
-                self.opts.n as u64,
+                self.opts.n,
                 self.opts.r,
                 self.opts.p,
                 dk.as_mut_ptr(),

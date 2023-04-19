@@ -15,3 +15,9 @@ rpassword = "5.0.1"
 
 [dependencies.pbr]
 git = "https://github.com/lbeder/pb.git"
+
+[profile.release]
+codegen-units = 1
+debug = true
+lto = true
+panic = "abort"

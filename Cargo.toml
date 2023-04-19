@@ -1,5 +1,5 @@
 [package]
-authors = ["Leonid Beder <leonid.beder@gmail.com>"]
+authors = ["Leonid Beder <leonid@lbeder.com>"]
 edition = "2021"
 name = "scrypt-kdf"
 version = "0.8.1"

@@ -1,7 +1,7 @@
-max_width = 120
 comment_width = 120
-match_block_trailing_comma = true
-wrap_comments = true
 error_on_line_overflow = true
-fn_args_density = "Compressed"
-merge_imports = true
+fn_args_layout = "Compressed"
+imports_granularity = "Crate"
+match_block_trailing_comma = true
+max_width = 120
+wrap_comments = true

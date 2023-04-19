@@ -13,6 +13,7 @@ use crossterm::{
 use getopts::Options;
 use humantime::format_duration;
 use pbr::ProgressBar;
+use scrypt_kdf::MAX_KDF_LEN;
 use std::{
     env,
     io::{self, Write},
@@ -21,12 +22,12 @@ use std::{
     time::{Duration, Instant},
 };
 
-use crate::scrypt_kdf::{ScryptKDF, ScryptKDFOptions};
+use crate::scrypt_kdf::{ScryptKDF, ScryptKDFOptions, TEST_VECTORS};
 
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
 fn print_usage(program: &str, opts: &Options) {
-    let brief = format!("Usage: {} [options]\nVersion: {}", program, VERSION);
+    let brief = format!("Usage: {program} [options]\nVersion: {VERSION}");
     println!("{}", opts.usage(&brief));
 }
 
@@ -43,10 +44,10 @@ fn get_options() -> Options {
         "ITER",
     );
     opts.optopt(
-        "n",
+        "logn",
         "workFactor",
-        &format!("set the work factor (default: {})", kdf_options.n),
-        "N",
+        &format!("set the work factor (default: {})", kdf_options.log_n),
+        "LOGN",
     );
     opts.optopt(
         "r",
@@ -61,10 +62,10 @@ fn get_options() -> Options {
         "P",
     );
     opts.optopt(
-        "k",
-        "keysize",
-        &format!("set the length of the derived (default: {})", kdf_options.keysize),
-        "SIZE",
+        "l",
+        "len",
+        &format!("set the length of the derived (default: {})", kdf_options.len),
+        "LENGTH",
     );
     opts.optflag("t", "test", "print test vectors");
     opts.optflag("h", "help", "print this help menu");
@@ -102,11 +103,11 @@ fn parse_options() -> ScryptKDFOptions {
             .unwrap_or(kdf_options.iterations);
     }
 
-    if matches.opt_present("n") {
-        kdf_options.n = matches
-            .opt_str("n")
-            .and_then(|o| o.parse::<u64>().ok())
-            .unwrap_or(kdf_options.n);
+    if matches.opt_present("logn") {
+        kdf_options.log_n = matches
+            .opt_str("logn")
+            .and_then(|o| o.parse::<u8>().ok())
+            .unwrap_or(kdf_options.log_n);
     }
 
     if matches.opt_present("r") {
@@ -123,17 +124,15 @@ fn parse_options() -> ScryptKDFOptions {
             .unwrap_or(kdf_options.p);
     }
 
-    if matches.opt_present("k") {
-        kdf_options.keysize = matches
-            .opt_str("k")
+    if matches.opt_present("l") {
+        kdf_options.len = matches
+            .opt_str("l")
             .and_then(|o| o.parse::<usize>().ok())
-            .unwrap_or(kdf_options.keysize);
+            .unwrap_or(kdf_options.len);
     }
 
-    let max_kdf_size = ScryptKDF::max_kdf_size();
-
-    if kdf_options.keysize > max_kdf_size {
-        println!("Keysize ({}) must be lower than {}", kdf_options.keysize, max_kdf_size);
+    if kdf_options.len > MAX_KDF_LEN {
+        println!("Keysize ({}) must be lower than {}", kdf_options.len, MAX_KDF_LEN);
         exit(-1);
     }
 
@@ -180,18 +179,17 @@ fn get_secret() -> String {
 fn print_test_vectors() {
     println!("Printing test vectors...\n");
 
-    let test_vectors = ScryptKDF::test_vectors();
     let test_keys = ScryptKDF::derive_test_vectors();
     for (i, key) in test_keys.iter().enumerate() {
-        let opts = &test_vectors[i].opts;
+        let opts = &TEST_VECTORS[i].opts;
         println!(
-            "Deriving with settings:\n    CPU/memory cost parameter (N): {}\n    Block size parameter (R): {}\n    Parallelization parameter (P): {}\n    Iterations: {}\n    Key size: {}\n",
-            opts.n, opts.r, opts.p, opts.iterations, opts.keysize
+            "Deriving with settings:\n    CPU/memory cost parameter (log(N)): {}\n    Block size parameter (R): {}\n    Parallelization parameter (P): {}\n    Iterations: {}\n    Length: {}\n",
+            opts.log_n, opts.r, opts.p, opts.iterations, opts.len
         );
 
         println!(
             "Key for test vector \"{}\" is: \n{}\n",
-            test_vectors[i].secret,
+            TEST_VECTORS[i].secret,
             hex::encode(key as &[u8])
         );
     }
@@ -218,13 +216,13 @@ fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
 }
 
 fn main() {
-    println!("Scrypt KDF v{}\n", VERSION);
+    println!("Scrypt KDF v{VERSION}\n");
 
     let opts = parse_options();
 
     println!(
-        "Deriving with settings:\n    CPU/memory cost parameter (log(N)): {}\n    Block size parameter (R): {}\n    Parallelization parameter (P): {}\n    Iterations: {}\n    Key size: {}\n",
-        opts.n, opts.r, opts.p, opts.iterations, opts.keysize
+        "Deriving with settings:\n    CPU/memory cost parameter (log(N)): {}\n    Block size parameter (R): {}\n    Parallelization parameter (P): {}\n    Iterations: {}\n    Length: {}\n",
+        opts.log_n, opts.r, opts.p, opts.iterations, opts.len
     );
 
     let salt = get_salt();

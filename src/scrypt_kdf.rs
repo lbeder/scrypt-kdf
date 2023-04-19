@@ -1,7 +1,5 @@
 use scrypt::{scrypt, Params};
 
-use std::default::Default;
-
 #[derive(PartialEq, Debug)]
 pub struct ScryptKDFOptions {
     pub log_n: u8,
@@ -17,17 +15,13 @@ pub struct TestScryptKDFOptions {
     pub secret: &'static str,
 }
 
-impl Default for ScryptKDFOptions {
-    fn default() -> Self {
-        Self {
-            log_n: 20,
-            r: 8,
-            p: 1,
-            iterations: 100,
-            len: 16,
-        }
-    }
-}
+pub const DEFAULT_SCRYPT_KDF_OPTIONS: ScryptKDFOptions = ScryptKDFOptions {
+    log_n: 20,
+    r: 8,
+    p: 1,
+    iterations: 100,
+    len: 16,
+};
 
 pub const TEST_VECTORS: &[&TestScryptKDFOptions] = &[
     &TestScryptKDFOptions {
@@ -60,6 +54,10 @@ pub struct ScryptKDF<'a> {
 
 impl<'a> ScryptKDF<'a> {
     pub fn new(opts: &'a ScryptKDFOptions) -> Self {
+        if opts.len > MAX_KDF_LEN {
+            panic!("length {} is greater than the max length of {MAX_KDF_LEN}", opts.len);
+        }
+
         ScryptKDF { opts }
     }
 

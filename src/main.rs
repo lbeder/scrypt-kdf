@@ -1,143 +1,61 @@
-extern crate crossterm;
-extern crate getopts;
 extern crate hex;
 extern crate pbr;
 
+use mimalloc::MiMalloc;
+
+#[global_allocator]
+static GLOBAL: MiMalloc = MiMalloc;
+
 mod scrypt_kdf;
 
+use crate::scrypt_kdf::{ScryptKDF, ScryptKDFOptions, TEST_VECTORS};
+use clap::{Parser, Subcommand};
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent},
-    style::{style, Color, Stylize},
+    style::Stylize,
     Result,
 };
-use getopts::Options;
 use humantime::format_duration;
 use pbr::ProgressBar;
+use scrypt_kdf::DEFAULT_SCRYPT_KDF_OPTIONS;
 use std::{
     env,
     io::{self, Write},
-    path::Path,
     process::exit,
     time::{Duration, Instant},
 };
 
-use crate::scrypt_kdf::{ScryptKDF, ScryptKDFOptions};
-
 const VERSION: &str = env!("CARGO_PKG_VERSION");
 
-fn print_usage(program: &str, opts: &Options) {
-    let brief = format!("Usage: {} [options]\nVersion: {}", program, VERSION);
-    println!("{}", opts.usage(&brief));
+#[derive(Parser)]
+#[command(author, version, about, long_about = None, arg_required_else_help = true, disable_help_subcommand = true)]
+struct Cli {
+    #[command(subcommand)]
+    command: Option<Commands>,
 }
 
-fn get_options() -> Options {
-    let kdf_options: ScryptKDFOptions = Default::default();
-    let mut opts = Options::new();
-    opts.optopt(
-        "i",
-        "iterations",
-        &format!(
-            "set the number of required iterations (default: {})",
-            kdf_options.iterations
-        ),
-        "ITER",
-    );
-    opts.optopt(
-        "n",
-        "workFactor",
-        &format!("set the work factor (default: {})", kdf_options.n),
-        "N",
-    );
-    opts.optopt(
-        "r",
-        "blocksize",
-        &format!("set the blocksize parameter (default: {})", kdf_options.r),
-        "R",
-    );
-    opts.optopt(
-        "p",
-        "parallel",
-        &format!("set the parallelization parameter (default: {})", kdf_options.p),
-        "P",
-    );
-    opts.optopt(
-        "k",
-        "keysize",
-        &format!("set the length of the derived (default: {})", kdf_options.keysize),
-        "SIZE",
-    );
-    opts.optflag("t", "test", "print test vectors");
-    opts.optflag("h", "help", "print this help menu");
-    opts.optflag("v", "version", "print version information");
+#[derive(Subcommand)]
+enum Commands {
+    #[command(about = "Derive a value using Scrypt KDF")]
+    Derive {
+        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.iterations.to_string(), help = "Number of iterations")]
+        iterations: u32,
 
-    opts
-}
+        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.log_n.to_string(), help = "Work factor")]
+        log_n: u8,
 
-fn parse_options() -> ScryptKDFOptions {
-    let opts = get_options();
-    let args: Vec<String> = env::args().collect();
-    let program = Path::new(&args[0]).file_name().unwrap().to_str().unwrap();
+        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.r.to_string(), help = "Block size")]
+        r: u32,
 
-    let matches = match opts.parse(&args[1..]) {
-        Ok(m) => m,
-        Err(f) => panic!("{}", f.to_string()),
-    };
+        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.p.to_string(), help = "Parallelization parameter")]
+        p: u32,
 
-    if matches.opt_present("h") {
-        print_usage(program, &opts);
-        exit(0);
-    }
+        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.len.to_string(), help = "Length of the derived result")]
+        l: usize,
+    },
 
-    if matches.opt_present("t") {
-        print_test_vectors();
-        exit(0);
-    }
-
-    let mut kdf_options: ScryptKDFOptions = Default::default();
-
-    if matches.opt_present("i") {
-        kdf_options.iterations = matches
-            .opt_str("i")
-            .and_then(|o| o.parse::<u32>().ok())
-            .unwrap_or(kdf_options.iterations);
-    }
-
-    if matches.opt_present("n") {
-        kdf_options.n = matches
-            .opt_str("n")
-            .and_then(|o| o.parse::<u64>().ok())
-            .unwrap_or(kdf_options.n);
-    }
-
-    if matches.opt_present("r") {
-        kdf_options.r = matches
-            .opt_str("r")
-            .and_then(|o| o.parse::<u32>().ok())
-            .unwrap_or(kdf_options.r);
-    }
-
-    if matches.opt_present("p") {
-        kdf_options.p = matches
-            .opt_str("p")
-            .and_then(|o| o.parse::<u32>().ok())
-            .unwrap_or(kdf_options.p);
-    }
-
-    if matches.opt_present("k") {
-        kdf_options.keysize = matches
-            .opt_str("k")
-            .and_then(|o| o.parse::<usize>().ok())
-            .unwrap_or(kdf_options.keysize);
-    }
-
-    let max_kdf_size = ScryptKDF::max_kdf_size();
-
-    if kdf_options.keysize > max_kdf_size {
-        println!("Keysize ({}) must be lower than {}", kdf_options.keysize, max_kdf_size);
-        exit(-1);
-    }
-
-    kdf_options
+    #[command(about = "Print test vectors")]
+    TestVectors {},
 }
 
 fn read_line() -> Result<String> {
@@ -146,11 +64,11 @@ fn read_line() -> Result<String> {
         match code {
             KeyCode::Enter => {
                 break;
-            }
+            },
             KeyCode::Char(c) => {
                 line.push(c);
-            }
-            _ => {}
+            },
+            _ => {},
         }
     }
 
@@ -159,13 +77,15 @@ fn read_line() -> Result<String> {
 
 fn get_salt() -> String {
     print!("Enter your salt: ");
+
     io::stdout().flush().unwrap();
+
     read_line().unwrap()
 }
 
 fn get_secret() -> String {
-    let pass = rpassword::prompt_password_stdout("Enter your secret: ").unwrap();
-    let pass2 = rpassword::prompt_password_stdout("Enter your secret again: ").unwrap();
+    let pass = rpassword::prompt_password("Enter your secret: ").unwrap();
+    let pass2 = rpassword::prompt_password("Enter your secret again: ").unwrap();
 
     println!();
 
@@ -177,64 +97,89 @@ fn get_secret() -> String {
     pass
 }
 
-fn print_test_vectors() {
-    println!("Printing test vectors...\n");
-
-    let test_vectors = ScryptKDF::test_vectors();
-    let test_keys = ScryptKDF::derive_test_vectors();
-    for (i, key) in test_keys.iter().enumerate() {
-        let opts = &test_vectors[i].opts;
-        println!(
-            "Deriving with settings:\n    CPU/memory cost parameter (N): {}\n    Block size parameter (R): {}\n    Parallelization parameter (P): {}\n    Iterations: {}\n    Key size: {}\n",
-            opts.n, opts.r, opts.p, opts.iterations, opts.keysize
-        );
-
-        println!(
-            "Key for test vector \"{}\" is: \n{}\n",
-            test_vectors[i].secret,
-            hex::encode(key as &[u8])
-        );
-    }
-}
-
-fn derive(opts: &ScryptKDFOptions, salt: &str, secret: &str) -> Vec<u8> {
-    let mut pb = ProgressBar::new(u64::from(opts.iterations));
-    pb.show_speed = false;
-    pb.message("Processing: ");
-    pb.tick();
-
-    let start = Instant::now();
-    let kdf = ScryptKDF::new(opts);
-    let res = kdf.derive_key_with_callback(salt, secret, || {
-        pb.inc();
-    });
-
-    pb.finish_println(&format!(
-        "Finished in {}\n",
-        format_duration(Duration::new(start.elapsed().as_secs(), 0))
-    ));
-
-    res
-}
-
 fn main() {
-    println!("Scrypt KDF v{}\n", VERSION);
+    better_panic::install();
+    color_backtrace::install();
 
-    let opts = parse_options();
+    println!("Scrypt KDF v{VERSION}\n");
 
-    println!(
-        "Deriving with settings:\n    CPU/memory cost parameter (log(N)): {}\n    Block size parameter (R): {}\n    Parallelization parameter (P): {}\n    Iterations: {}\n    Key size: {}\n",
-        opts.n, opts.r, opts.p, opts.iterations, opts.keysize
-    );
+    let cli = Cli::parse();
 
-    let salt = get_salt();
-    let secret = get_secret();
+    match &cli.command {
+        Some(Commands::Derive {
+            iterations,
+            log_n,
+            r,
+            p,
+            l,
+        }) => {
+            println!(
+                "Parameters: {} (log_n: {}, r: {}, p: {}, len: {})\n",
+                "Scrypt".yellow(),
+                log_n.to_string().cyan(),
+                r.to_string().cyan(),
+                p.to_string().cyan(),
+                l.to_string().cyan(),
+            );
 
-    let key = derive(&opts, &salt, &secret);
+            let salt = get_salt();
+            let secret = get_secret();
 
-    print!("Key is (please highlight to see): ");
-    println!(
-        "{}",
-        style(hex::encode(&key as &[u8])).with(Color::Black).on(Color::Black)
-    );
+            let mut pb = ProgressBar::new(u64::from(*iterations));
+            pb.show_speed = false;
+            pb.message("Processing: ");
+            pb.tick();
+
+            let start = Instant::now();
+
+            let opts = ScryptKDFOptions {
+                log_n: *log_n,
+                r: *r,
+                p: *p,
+                len: *l,
+                iterations: *iterations,
+            };
+            let kdf = ScryptKDF::new(&opts);
+
+            let res = kdf.derive_key_with_callback(&salt, &secret, || {
+                pb.inc();
+            });
+
+            println!("Key is (please highlight to see): ");
+            println!("{}", hex::encode(&res as &[u8]).black().on_black());
+
+            pb.finish_println(&format!(
+                "Finished in {}\n",
+                format_duration(Duration::new(start.elapsed().as_secs(), 0))
+                    .to_string()
+                    .cyan()
+            ));
+        },
+
+        Some(Commands::TestVectors {}) => {
+            let test_keys = ScryptKDF::derive_test_vectors();
+            for (i, key) in test_keys.iter().enumerate() {
+                let opts = &TEST_VECTORS[i].opts;
+
+                println!(
+                    "Test vector parameters: {} (log_n: {}, r: {}, p: {}, iterations: {}, len: {})",
+                    "Scrypt".yellow(),
+                    opts.log_n.to_string().cyan(),
+                    opts.r.to_string().cyan(),
+                    opts.p.to_string().cyan(),
+                    opts.iterations.to_string().cyan(),
+                    opts.len.to_string().cyan(),
+                );
+
+                println!(
+                    "Key for test vector \"{}\" is: {}",
+                    TEST_VECTORS[i].secret.to_string().cyan(),
+                    hex::encode(key as &[u8]).cyan()
+                );
+
+                println!();
+            }
+        },
+        None => {},
+    }
 }

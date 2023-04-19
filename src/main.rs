@@ -164,8 +164,8 @@ fn get_salt() -> String {
 }
 
 fn get_secret() -> String {
-    let pass = rpassword::prompt_password_stdout("Enter your secret: ").unwrap();
-    let pass2 = rpassword::prompt_password_stdout("Enter your secret again: ").unwrap();
+    let pass = rpassword::prompt_password("Enter your secret: ").unwrap();
+    let pass2 = rpassword::prompt_password("Enter your secret again: ").unwrap();
 
     println!();
 

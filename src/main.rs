@@ -146,11 +146,11 @@ fn read_line() -> Result<String> {
         match code {
             KeyCode::Enter => {
                 break;
-            }
+            },
             KeyCode::Char(c) => {
                 line.push(c);
-            }
-            _ => {}
+            },
+            _ => {},
         }
     }
 

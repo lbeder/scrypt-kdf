@@ -16,7 +16,6 @@ use crossterm::{
     Result,
 };
 use humantime::format_duration;
-use log::{info, Level, LevelFilter};
 use pbr::ProgressBar;
 use scrypt_kdf::DEFAULT_SCRYPT_KDF_OPTIONS;
 use std::{
@@ -102,21 +101,6 @@ fn main() {
     better_panic::install();
     color_backtrace::install();
 
-    env_logger::builder()
-        .filter_level(LevelFilter::Info)
-        .format(|buf, record| {
-            let level = match record.level() {
-                Level::Info => Level::Info.to_string().green(),
-                Level::Warn => Level::Warn.to_string().yellow(),
-                Level::Error => Level::Error.to_string().red(),
-                Level::Debug => Level::Debug.to_string().grey(),
-                Level::Trace => Level::Trace.to_string().grey(),
-            };
-
-            writeln!(buf, "[{}]: {}", level, record.args())
-        })
-        .init();
-
     println!("Scrypt KDF v{VERSION}\n");
 
     let cli = Cli::parse();
@@ -129,7 +113,7 @@ fn main() {
             p,
             l,
         }) => {
-            info!(
+            println!(
                 "Parameters: {} (log_n: {}, r: {}, p: {}, len: {})\n",
                 "Scrypt".yellow(),
                 log_n.to_string().cyan(),
@@ -161,8 +145,8 @@ fn main() {
                 pb.inc();
             });
 
-            info!("Key is (please highlight to see): ");
-            info!("{}", hex::encode(&res as &[u8]).black().on_black());
+            println!("Key is (please highlight to see): ");
+            println!("{}", hex::encode(&res as &[u8]).black().on_black());
 
             pb.finish_println(&format!(
                 "Finished in {}\n",
@@ -177,7 +161,7 @@ fn main() {
             for (i, key) in test_keys.iter().enumerate() {
                 let opts = &TEST_VECTORS[i].opts;
 
-                info!(
+                println!(
                     "Test vector parameters: {} (log_n: {}, r: {}, p: {}, iterations: {}, len: {})",
                     "Scrypt".yellow(),
                     opts.log_n.to_string().cyan(),
@@ -187,9 +171,7 @@ fn main() {
                     opts.len.to_string().cyan(),
                 );
 
-                println!();
-
-                info!(
+                println!(
                     "Key for test vector \"{}\" is: {}",
                     TEST_VECTORS[i].secret.to_string().cyan(),
                     hex::encode(key as &[u8]).cyan()

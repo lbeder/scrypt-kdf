@@ -58,6 +58,13 @@ cd scrypt-kdf
 cargo build --release
 ```
 
+Depending on whether you are using x64 or arm64, you might need to add either the `x86_64-apple-darwin` or the `aarch64-apple-darwin` target accordingly:
+
+```sh
+rustup target add x86_64-apple-darwin
+rustup target add aarch64-apple-darwin
+```
+
 ### Linux x86_x64
 
 In order to get stuff working later, use the `nightly` branch of Rust:
@@ -88,6 +95,32 @@ export AR_x86_64_unknown_linux_musl=x86_64-unknown-linux-musl-ar
 export CARGO_TARGET_X86_64_UNKNOWN_LINUX_MUSL_LINKER=x86_64-unknown-linux-musl-gcc
 CROSS_COMPILE=x86_64-linux-musl- cargo build --target=x86_64-unknown-linux-musl
 cargo build --target=x86_64-unknown-linux-musl
+```
+
+### For Windows
+
+In order to get stuff working later, use the `nightly` branch of Rust:
+
+```sh
+rustup override set nightly
+```
+
+Install the standard Windows target on a Mac (note, that the opposite is currently impossible):
+
+```sh
+rustup target add x86_64-pc-windows-gnu
+```
+
+Use `homebrew` to install mingw-w64:
+
+```sh
+brew install mingw-w64
+```
+
+Now you can build it:
+
+```sh
+cargo build --release --target=x86_64-pc-windows-gnu
 ```
 
 ## Example

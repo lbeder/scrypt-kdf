@@ -157,25 +157,23 @@ fn main() {
         },
 
         Some(Commands::TestVectors {}) => {
-            let test_keys = ScryptKDF::derive_test_vectors();
-            for (i, key) in test_keys.iter().enumerate() {
-                let opts = &TEST_VECTORS[i].opts;
-
+            for test_vector in TEST_VECTORS.iter() {
                 println!(
-                    "Test vector parameters: {} (log_n: {}, r: {}, p: {}, iterations: {}, len: {})",
+                    "Test vector parameters: {} (log_n: {}, r: {}, p: {}, iterations: {}, len: {}), salt: \"{}\", secret: \"{}\"",
                     "Scrypt".yellow(),
-                    opts.log_n.to_string().cyan(),
-                    opts.r.to_string().cyan(),
-                    opts.p.to_string().cyan(),
-                    opts.iterations.to_string().cyan(),
-                    opts.len.to_string().cyan(),
+                    test_vector.opts.log_n.to_string().cyan(),
+                    test_vector.opts.r.to_string().cyan(),
+                    test_vector.opts.p.to_string().cyan(),
+                    test_vector.opts.iterations.to_string().cyan(),
+                    test_vector.opts.len.to_string().cyan(),
+                    test_vector.salt.to_string().cyan(),
+                    test_vector.secret.to_string().cyan(),
                 );
 
-                println!(
-                    "Key for test vector \"{}\" is: {}",
-                    TEST_VECTORS[i].secret.to_string().cyan(),
-                    hex::encode(key as &[u8]).cyan()
-                );
+                let kdf = ScryptKDF::new(&test_vector.opts);
+                let key = kdf.derive_key(test_vector.salt, test_vector.secret);
+
+                println!("Derived key: {}", hex::encode(&key).cyan());
 
                 println!();
             }

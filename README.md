@@ -187,34 +187,11 @@ Test vectors:
 Results should be:
 
 ```sh
-Printing test vectors...
+Test vector parameters: Scrypt (log_n: 14, r: 8, p: 1, iterations: 1, len: 64), salt: "", secret: ""
+Derived key: d72c87d0f077c7766f2985dfab30e8955c373a13a1e93d315203939f542ff86e73ee37c31f4c4b571f4719fa8e3589f12db8dcb57ea9f56764bb7d58f64cf705
 
-Deriving with settings:
-    CPU/memory cost parameter (log(n)): 14
-    Block size parameter (r): 8
-    Parallelization parameter (p): 1
-    Iterations: 1
-    Length: 64
-
-Key for test vector "" is:
-d72c87d0f077c7766f2985dfab30e8955c373a13a1e93d315203939f542ff86e73ee37c31f4c4b571f4719fa8e3589f12db8dcb57ea9f56764bb7d58f64cf705f1f64bdd91c35da954a6fb7896f1839e6ba03f68f08b686527f9f1588ab103c22152046258e2d679842252afeb3cd6eb4e01fe9c285eb916da7e4b7a39ee5eba
-
-Deriving with settings:
-    CPU/memory cost parameter (log(n)): 14
-    Block size parameter (r): 8
-    Parallelization parameter (p): 1
-    Iterations: 3
-    Length: 64
-
-Key for test vector "Hello World" is:
-38f3b062f703aa0c958fc8944c9f005f1bd03a056048d5cdc6186979e4c178504050580fab8744c0272253f7df87a2e2f9bb5449a2361f0fed5105ea549e86e41f68d8b160cda5ca91e020067b0c53fc20ae19993e1f40db60d8963ec8c7c0fe74d48a44f1f78a4259f0376f6d7dd2c07d2e7aaae023b8bdfa87ddbf503fe9a3
-
-Test vector parameters: Scrypt (log_n: 14, r: 8, p: 1, iterations: 1, len: 64)
-Key for test vector "" is: d72c87d0f077c7766f2985dfab30e8955c373a13a1e93d315203939f542ff86e73ee37c31f4c4b571f4719fa8e3589f12db8dcb57ea9f56764bb7d58f64cf705
-
-Test vector parameters: Scrypt (log_n: 14, r: 8, p: 1, iterations: 3, len: 64)
-Key for test vector "Hello World" is: 1487e1ac9c7a63e785b1f3e9560ea749913d50c9797dc6ca8d0db953fe03df1c66af878bd6dcce79884e8b7e3e29f39cb709cd63b7e7f4099d82ab199664eab3
-
+Test vector parameters: Scrypt (log_n: 14, r: 8, p: 1, iterations: 3, len: 64), salt: "", secret: "Hello World"
+Derived key: 1487e1ac9c7a63e785b1f3e9560ea749913d50c9797dc6ca8d0db953fe03df1c66af878bd6dcce79884e8b7e3e29f39cb709cd63b7e7f4099d82ab199664eab3
 ```
 
 ## License

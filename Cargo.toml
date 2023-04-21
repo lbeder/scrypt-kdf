@@ -2,7 +2,7 @@
 authors = ["Leonid Beder <leonid@lbeder.com>"]
 edition = "2021"
 name = "scrypt-kdf"
-version = "0.10.0"
+version = "0.10.1"
 
 [dependencies]
 better-panic = "0.3.0"
@@ -22,3 +22,6 @@ git = "https://github.com/lbeder/pb.git"
 [profile.release]
 debug = true
 panic = "abort"
+
+[dev-dependencies]
+rstest = "0.17.0"

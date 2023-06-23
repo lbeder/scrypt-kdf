@@ -6,7 +6,7 @@ pub struct ScryptKDFOptions {
     pub r: u32,
     pub p: u32,
     pub iterations: u32,
-    pub len: usize,
+    pub len: u8,
 }
 
 #[derive(PartialEq, Debug)]
@@ -49,7 +49,8 @@ pub const TEST_VECTORS: &[&TestScryptKDFOptions] = &[
     },
 ];
 
-pub const MAX_KDF_LEN: usize = 64;
+pub const MIN_KDF_LEN: u8 = 10;
+pub const MAX_KDF_LEN: u8 = 64;
 
 pub struct ScryptKDF<'a> {
     opts: &'a ScryptKDFOptions,
@@ -57,6 +58,10 @@ pub struct ScryptKDF<'a> {
 
 impl<'a> ScryptKDF<'a> {
     pub fn new(opts: &'a ScryptKDFOptions) -> Self {
+        if opts.len < MIN_KDF_LEN {
+            panic!("length {} is lower than the min length of {MIN_KDF_LEN}", opts.len);
+        }
+
         if opts.len > MAX_KDF_LEN {
             panic!("length {} is greater than the max length of {MAX_KDF_LEN}", opts.len);
         }
@@ -65,7 +70,7 @@ impl<'a> ScryptKDF<'a> {
     }
 
     fn derive(&self, salt: &[u8], secret: &[u8]) -> Vec<u8> {
-        let mut dk = vec![0; self.opts.len];
+        let mut dk = vec![0; self.opts.len as usize];
 
         scrypt(
             secret,

@@ -17,7 +17,7 @@ use crossterm::{
 };
 use humantime::format_duration;
 use pbr::ProgressBar;
-use scrypt_kdf::DEFAULT_SCRYPT_KDF_OPTIONS;
+use scrypt_kdf::{DEFAULT_SCRYPT_KDF_OPTIONS, MAX_KDF_LEN, MIN_KDF_LEN};
 use std::{
     env,
     io::{self, Write},
@@ -36,22 +36,22 @@ struct Cli {
 
 #[derive(Subcommand)]
 enum Commands {
-    #[command(about = "Derive a value using Scrypt KDF")]
+    #[command(about = "Derive a key using Scrypt KDF")]
     Derive {
-        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.iterations.to_string(), help = "Number of iterations")]
+        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.iterations.to_string(), help = format!("Number of iterations (must be greater than 0 and less than or equal to {})", u32::MAX))]
         iterations: u32,
 
-        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.log_n.to_string(), help = "Work factor")]
+        #[arg(short = 'n', default_value = DEFAULT_SCRYPT_KDF_OPTIONS.log_n.to_string(), help = format!("CPU/memory cost parameter (must be less than {})", usize::BITS))]
         log_n: u8,
 
-        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.r.to_string(), help = "Block size")]
+        #[arg(short, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.r.to_string(), help = format!("Block size parameter, which fine-tunes sequential memory read size and performance (must be greater than 0 and less than or equal to {})", u32::MAX))]
         r: u32,
 
-        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.p.to_string(), help = "Parallelization parameter")]
+        #[arg(short, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.p.to_string(), help = format!("Parallelization parameter (must be greater than 0 and less than {})", u32::MAX))]
         p: u32,
 
-        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.len.to_string(), help = "Length of the derived result")]
-        l: usize,
+        #[arg(short, long, default_value = DEFAULT_SCRYPT_KDF_OPTIONS.len.to_string(), help = format!("Length of the derived result (must be greater than {} and less than or equal to {})", MIN_KDF_LEN - 1, MAX_KDF_LEN))]
+        length: u8,
     },
 
     #[command(about = "Print test vectors")]
@@ -111,7 +111,7 @@ fn main() {
             log_n,
             r,
             p,
-            l,
+            length,
         }) => {
             println!(
                 "Parameters: {} (log_n: {}, r: {}, p: {}, len: {})\n",
@@ -119,7 +119,7 @@ fn main() {
                 log_n.to_string().cyan(),
                 r.to_string().cyan(),
                 p.to_string().cyan(),
-                l.to_string().cyan(),
+                length.to_string().cyan(),
             );
 
             let salt = get_salt();
@@ -136,7 +136,7 @@ fn main() {
                 log_n: *log_n,
                 r: *r,
                 p: *p,
-                len: *l,
+                len: *length,
                 iterations: *iterations,
             };
             let kdf = ScryptKDF::new(&opts);

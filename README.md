@@ -23,16 +23,16 @@ Options:
 ### Deriving
 
 ```sh
-Derive a value using Scrypt KDF
+Derive a key using Scrypt KDF
 
-Usage: scrypt-kdf derive --iterations <ITERATIONS> --log-n <LOG_N> --r <R> --p <P> --l <L>
+Usage: scrypt-kdf derive [OPTIONS]
 
 Options:
-  -i, --iterations <ITERATIONS>  Number of iterations [default: 100]
-  -l, --log-n <LOG_N>            Work factor [default: 20]
-  -r, --r <R>                    Block size [default: 8]
-  -p, --p <P>                    Parallelization parameter [default: 1]
-  -l, --l <L>                    Length of the derived result [default: 16]
+  -i, --iterations <ITERATIONS>  Number of iterations (must be greater than 0 and less than or equal to 4294967295) [default: 100]
+  -n <LOG_N>                     CPU/memory cost parameter (must be less than 64) [default: 20]
+  -r <R>                         Block size parameter, which fine-tunes sequential memory read size and performance (must be greater than 0 and less than or equal to 4294967295) [default: 8]
+  -p <P>                         Parallelization parameter (must be greater than 0 and less than 4294967295) [default: 1]
+  -l, --length <LENGTH>          Length of the derived result (must be greater than 9 and less than or equal to 64) [default: 16]
   -h, --help                     Print help
 ```
 

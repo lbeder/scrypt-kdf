@@ -6,7 +6,7 @@ version = "0.12.0"
 
 [dependencies]
 better-panic = "0.3.0"
-clap = {version = "4.3.4", features = ["derive", "string"]}
+clap = {version = "4.3.5", features = ["derive", "string"]}
 color-backtrace = "0.5.1"
 colored = "2.0.0"
 crossterm = "0.26.1"

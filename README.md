@@ -12,8 +12,8 @@ Scrypt Key Derivation Function in Rust
 Usage: scrypt-kdf [COMMAND]
 
 Commands:
-  derive        Derive a value using Scrypt KDF
-  test-vectors  Print test vectors
+  derive  Derive a value using Scrypt KDF
+  test    Print test vectors
 
 Options:
   -h, --help     Print help
@@ -41,7 +41,7 @@ Options:
 ```sh
 Print test vectors
 
-Usage: scrypt-kdf test-vectors
+Usage: scrypt-kdf test
 
 Options:
   -h, --help  Print help

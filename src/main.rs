@@ -55,7 +55,7 @@ enum Commands {
     },
 
     #[command(about = "Print test vectors")]
-    TestVectors {},
+    Test {},
 }
 
 fn read_line() -> Result<String> {
@@ -156,7 +156,7 @@ fn main() {
             ));
         },
 
-        Some(Commands::TestVectors {}) => {
+        Some(Commands::Test {}) => {
             for test_vector in TEST_VECTORS.iter() {
                 println!(
                     "Test vector parameters: {} (log_n: {}, r: {}, p: {}, iterations: {}, len: {}), salt: \"{}\", secret: \"{}\"",

@@ -28,12 +28,14 @@ Derive a key using Scrypt KDF
 Usage: scrypt-kdf derive [OPTIONS]
 
 Options:
-  -i, --iterations <ITERATIONS>  Number of iterations (must be greater than 0 and less than or equal to 4294967295) [default: 100]
-  -n <LOG_N>                     CPU/memory cost parameter (must be less than 64) [default: 20]
-  -r <R>                         Block size parameter, which fine-tunes sequential memory read size and performance (must be greater than 0 and less than or equal to 4294967295) [default: 8]
-  -p <P>                         Parallelization parameter (must be greater than 0 and less than 4294967295) [default: 1]
-  -l, --length <LENGTH>          Length of the derived result (must be greater than 9 and less than or equal to 64) [default: 16]
-  -h, --help                     Print help
+  -i, --iterations <ITERATIONS>    Number of iterations (must be greater than 0 and less than or equal to 4294967295) [default: 100]
+  -n <LOG_N>                       CPU/memory cost parameter (must be less than 64) [default: 20]
+  -r <R>                           Block size parameter, which fine-tunes sequential memory read size and performance (must be greater than 0 and less than or equal to 4294967295) [default: 8]
+  -p <P>                           Parallelization parameter (must be greater than 0 and less than 4294967295) [default: 1]
+  -l, --length <LENGTH>            Length of the derived result (must be greater than 9 and less than or equal to 64) [default: 16]
+      --offset <OFFSET>            Start the derivation from this index. In order to use it, you also have to specify the intermediary offset data in hex format [default: 0]
+      --offset-data <OFFSET_DATA>  Start the derivation with this intermediary data in hex format
+  -h, --help                       Print help
 ```
 
 ### Printing Test Vectors
@@ -123,16 +125,14 @@ Now you can build it:
 cargo build --release --target=x86_64-pc-windows-gnu
 ```
 
-## Example
+## Examples
 
 Let's try to derive the key for the secret `test`, using the salt `salt`:
 
 > scrypt-kdf derive
 
 ```sh
-Scrypt KDF v0.10.0
-
-Parameters: Scrypt (log_n: 20, r: 8, p: 1, len: 16)
+Parameters: Scrypt (log_n: 20, r: 8, p: 1, length: 16)
 
 Enter your salt: salt
 Enter your secret: 🔑
@@ -150,10 +150,45 @@ Enter your secret again: 🔑
 
 Processing: 100 / 100 [=======================================================================================================================================] 100.00 %
 
-Key is (please highlight to see):
-16e27a594f879ec5edbc3c1995907b49
+Key is (please highlight to see): ff08101f061aa670158601bf5be5efa6
 
 Finished in 3m 29s
+```
+
+### Resuming Previous Derivation
+
+To help with resuming previously stopped derivations, we're registering a `CTRL_C`, `CTRL_BREAK`, `SIGINT`, `SIGTERM`, and `SIGHUP` termination handler which will output the intermediary result (if possible).
+
+For example, if we will abort the previous derivation after the `60th` iteration, the tool will output:
+
+```sh
+Parameters: Scrypt (log_n: 20, r: 8, p: 1, length: 16)
+
+Enter your salt: salt
+Enter your secret: 🔑
+Enter your secret again: 🔑
+
+Processing: 60 / 100 [==========================================================================>-------------------------------------------------] 60.00 % 1m
+
+Terminated. To resume, please specify --offset 60 and --offset-data (please highlight to see) 2262d7c10e3806a4926a895f7cf9502b
+```
+
+You can then use this output to resume the previous derivation by specifying a starting offset and data like so:
+
+> scrypt-kdf derive --offset 60 --offset-data 2262d7c10e3806a4926a895f7cf9502b
+
+```sh
+Parameters: Scrypt (log_n: 20, r: 8, p: 1, length: 16)
+
+Enter your salt: salt
+
+Resuming from iteration 60 with intermediary offset data 2262d7c10e3806a4926a895f7cf9502b. Secret input isn't be required
+
+Processing: 40 / 40 [===============================================================================================================================] 100.00 %
+
+Key is (please highlight to see): ff08101f061aa670158601bf5be5efa6
+
+Finished in 1m 25s
 ```
 
 ## Test Vectors
@@ -187,10 +222,10 @@ Test vectors:
 Results should be:
 
 ```sh
-Test vector parameters: Scrypt (log_n: 14, r: 8, p: 1, iterations: 1, len: 64), salt: "", secret: ""
+Test vector parameters: Scrypt (log_n: 14, r: 8, p: 1, iterations: 1, length: 64), salt: "", secret: ""
 Derived key: d72c87d0f077c7766f2985dfab30e8955c373a13a1e93d315203939f542ff86e73ee37c31f4c4b571f4719fa8e3589f12db8dcb57ea9f56764bb7d58f64cf705
 
-Test vector parameters: Scrypt (log_n: 14, r: 8, p: 1, iterations: 3, len: 64), salt: "", secret: "Hello World"
+Test vector parameters: Scrypt (log_n: 14, r: 8, p: 1, iterations: 3, length: 64), salt: "", secret: "Hello World"
 Derived key: 1487e1ac9c7a63e785b1f3e9560ea749913d50c9797dc6ca8d0db953fe03df1c66af878bd6dcce79884e8b7e3e29f39cb709cd63b7e7f4099d82ab199664eab3
 ```
 

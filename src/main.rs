@@ -16,14 +16,13 @@ use clap::{Parser, Subcommand};
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent},
     style::Stylize,
-    Result,
 };
 use humantime::format_duration;
 use pbr::ProgressBar;
 use scrypt_kdf::{DEFAULT_SCRYPT_KDF_OPTIONS, MAX_KDF_LEN, MIN_KDF_LEN};
 use std::{
     env,
-    io::{self, Write},
+    io::{self, Result, Write},
     process::exit,
     sync::{Arc, Mutex},
     time::{Duration, Instant},

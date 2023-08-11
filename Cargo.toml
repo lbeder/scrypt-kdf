@@ -6,10 +6,10 @@ version = "0.13.0"
 
 [dependencies]
 better-panic = "0.3.0"
-clap = { version = "4.3.5", features = ["derive", "string"] }
-color-backtrace = "0.5.1"
-colored = "2.0.0"
-crossterm = "0.26.1"
+clap = { version = "4.3.21", features = ["derive", "string"] }
+color-backtrace = "0.6.0"
+colored = "2.0.4"
+crossterm = "0.27.0"
 ctrlc = { version = "3.4.0", features = ["termination"] }
 hex = "0.4.3"
 humantime = "2.1.0"
@@ -22,7 +22,7 @@ lazy_static = "1.4.0"
 git = "https://github.com/lbeder/pb.git"
 
 [dev-dependencies]
-rstest = "0.17.0"
+rstest = "0.18.1"
 
 [profile.release]
 panic = "abort"

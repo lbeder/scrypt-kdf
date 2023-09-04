@@ -96,6 +96,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "base64"
+version = "0.21.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "414dcefbc63d77c526a76b3afcf6fbb9b5e2791c19c3aa2297733208750c6e53"
+
+[[package]]
 name = "base64ct"
 version = "1.6.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -881,6 +887,7 @@ dependencies = [
 name = "scrypt-kdf"
 version = "0.13.1"
 dependencies = [
+ "base64",
  "better-panic",
  "clap",
  "color-backtrace",

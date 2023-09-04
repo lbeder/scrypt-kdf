@@ -17,6 +17,7 @@ mimalloc = { version = "0.1.38", default-features = false }
 rpassword = "7.2.0"
 scrypt = "0.11.0"
 lazy_static = "1.4.0"
+base64 = "0.21.3"
 
 [dependencies.pbr]
 git = "https://github.com/lbeder/pb.git"

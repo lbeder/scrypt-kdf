@@ -35,6 +35,7 @@ Options:
   -l, --length <LENGTH>            Length of the derived result (must be greater than 9 and less than or equal to 64) [default: 16]
       --offset <OFFSET>            Start the derivation from this index. In order to use it, you also have to specify the intermediary offset data in hex format [default: 0]
       --offset-data <OFFSET_DATA>  Start the derivation with this intermediary data in hex format
+      --base64                     Encode/decode the output/input as BASE64
   -h, --help                       Print help
 ```
 

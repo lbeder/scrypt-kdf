@@ -12,6 +12,7 @@ static GLOBAL: MiMalloc = MiMalloc;
 mod scrypt_kdf;
 
 use crate::scrypt_kdf::{ScryptKDF, ScryptKDFOptions, TEST_VECTORS};
+use base64::{engine::general_purpose, Engine as _};
 use clap::{Parser, Subcommand};
 use crossterm::{
     event::{self, Event, KeyCode, KeyEvent},
@@ -65,6 +66,9 @@ enum Commands {
 
         #[arg(long, help = "Start the derivation with this intermediary data in hex format")]
         offset_data: Option<String>,
+
+        #[arg(long, action = clap::ArgAction::SetTrue, help = "Encode/decode the output/input as BASE64")]
+        base64: bool,
     },
 
     #[command(about = "Print test vectors")]
@@ -128,6 +132,7 @@ fn main() {
             length,
             offset,
             offset_data,
+            base64,
         }) => {
             println!(
                 "Parameters: {} (log_n: {}, r: {}, p: {}, length: {})",
@@ -169,7 +174,11 @@ fn main() {
                         println!("Resuming from iteration {offset} with intermediary offset data {data}. Secret input isn't be required");
                         println!();
 
-                        hex::decode(data).unwrap()
+                        if *base64 {
+                            general_purpose::STANDARD_NO_PAD.decode(data).unwrap()
+                        } else {
+                            hex::decode(data).unwrap()
+                        }
                     },
 
                     None => {
@@ -200,19 +209,29 @@ fn main() {
 
             let last_iteration2 = last_iteration_ref;
             let last_result2 = last_result_ref;
-            let res = kdf.derive_key_with_callback(&salt, &data, *offset, |i, res| {
+            let key = kdf.derive_key_with_callback(&salt, &data, *offset, |i, res| {
                 *last_iteration2.lock().unwrap() = i;
-                *last_result2.lock().unwrap() = hex::encode(res);
+
+                *last_result2.lock().unwrap() = if *base64 {
+                    general_purpose::STANDARD_NO_PAD.encode(res)
+                } else {
+                    hex::encode(res)
+                };
 
                 pb.inc();
             });
 
+            println!("XXXXX {}", base64);
+
+            let res = if *base64 {
+                general_purpose::STANDARD_NO_PAD.encode(&key)
+            } else {
+                hex::encode(&key)
+            };
+
             println!();
             println!();
-            println!(
-                "Key is (please highlight to see): {}",
-                hex::encode(res).black().on_black()
-            );
+            println!("Key is (please highlight to see): {}", res.black().on_black());
 
             pb.finish_println(&format!(
                 "Finished in {}\n",

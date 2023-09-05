@@ -152,12 +152,18 @@ fn main() {
             let last_result = last_result_ref.clone();
 
             ctrlc::set_handler(move || {
+                let offset = *last_iteration.lock().unwrap();
+                let offset_data = last_result.lock().unwrap();
+                if offset_data.is_empty() {
+                    exit(-1);
+                }
+
                 println!();
                 println!();
                 println!(
                     "Terminated. To resume, please specify --offset {} and --offset-data (please highlight to see) {}",
-                    *last_iteration.lock().unwrap() + 1,
-                    last_result.lock().unwrap().clone().black().on_black()
+                    offset + 1,
+                    offset_data.clone().black().on_black()
                 );
 
                 exit(-1);
@@ -174,11 +180,7 @@ fn main() {
                         println!("Resuming from iteration {offset} with intermediary offset data {data}. Secret input isn't be required");
                         println!();
 
-                        if *base64 {
-                            general_purpose::STANDARD_NO_PAD.decode(data).unwrap()
-                        } else {
-                            hex::decode(data).unwrap()
-                        }
+                        hex::decode(data).unwrap()
                     },
 
                     None => {
@@ -211,17 +213,10 @@ fn main() {
             let last_result2 = last_result_ref;
             let key = kdf.derive_key_with_callback(&salt, &data, *offset, |i, res| {
                 *last_iteration2.lock().unwrap() = i;
-
-                *last_result2.lock().unwrap() = if *base64 {
-                    general_purpose::STANDARD_NO_PAD.encode(res)
-                } else {
-                    hex::encode(res)
-                };
+                *last_result2.lock().unwrap() = hex::encode(res);
 
                 pb.inc();
             });
-
-            println!("XXXXX {}", base64);
 
             let res = if *base64 {
                 general_purpose::STANDARD_NO_PAD.encode(&key)

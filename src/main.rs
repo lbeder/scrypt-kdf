@@ -67,8 +67,11 @@ enum Commands {
         #[arg(long, help = "Start the derivation with this intermediary data in hex format")]
         offset_data: Option<String>,
 
-        #[arg(long, action = clap::ArgAction::SetTrue, help = "Encode/decode the output/input as BASE64")]
+        #[arg(long, action = clap::ArgAction::SetTrue, help = "Output the result in Base64 (in addition to hex)")]
         base64: bool,
+
+        #[arg(long, action = clap::ArgAction::SetTrue, help = "Output the result in Base58 (in addition to hex)")]
+        base58: bool,
     },
 
     #[command(about = "Print test vectors")]
@@ -133,6 +136,7 @@ fn main() {
             offset,
             offset_data,
             base64,
+            base58,
         }) => {
             println!(
                 "Parameters: {} (log_n: {}, r: {}, p: {}, length: {})",
@@ -218,15 +222,26 @@ fn main() {
                 pb.inc();
             });
 
-            let res = if *base64 {
-                general_purpose::STANDARD_NO_PAD.encode(&key)
-            } else {
-                hex::encode(&key)
-            };
+            println!();
+            println!();
+            println!(
+                "Key (hex) is (please highlight to see): {}",
+                hex::encode(&key).black().on_black()
+            );
 
-            println!();
-            println!();
-            println!("Key is (please highlight to see): {}", res.black().on_black());
+            if *base64 {
+                println!(
+                    "Key (base64) is (please highlight to see): {}",
+                    general_purpose::STANDARD.encode(&key).black().on_black()
+                );
+            }
+
+            if *base58 {
+                println!(
+                    "Key (base58) is (please highlight to see): {}",
+                    bs58::encode(&key).into_string().black().on_black()
+                );
+            }
 
             pb.finish_println(&format!(
                 "Finished in {}\n",

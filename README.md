@@ -35,7 +35,8 @@ Options:
   -l, --length <LENGTH>            Length of the derived result (must be greater than 9 and less than or equal to 64) [default: 16]
       --offset <OFFSET>            Start the derivation from this index. In order to use it, you also have to specify the intermediary offset data in hex format [default: 0]
       --offset-data <OFFSET_DATA>  Start the derivation with this intermediary data in hex format
-      --base64                     Encode/decode the output/input as BASE64
+      --base64                     Output the result in Base64 (in addition to hex)
+      --base58                     Output the result in Base58 (in addition to hex)
   -h, --help                       Print help
 ```
 
@@ -151,7 +152,7 @@ Enter your secret again: 🔑
 
 Processing: 100 / 100 [=======================================================================================================================================] 100.00 %
 
-Key is (please highlight to see): ff08101f061aa670158601bf5be5efa6
+Key (hex) is (please highlight to see): ff08101f061aa670158601bf5be5efa6
 
 Finished in 3m 29s
 ```
@@ -187,7 +188,7 @@ Resuming from iteration 60 with intermediary offset data 2262d7c10e3806a4926a895
 
 Processing: 40 / 40 [===============================================================================================================================] 100.00 %
 
-Key is (please highlight to see): ff08101f061aa670158601bf5be5efa6
+Key (hex) is (please highlight to see): ff08101f061aa670158601bf5be5efa6
 
 Finished in 1m 25s
 ```

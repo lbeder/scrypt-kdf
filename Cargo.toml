@@ -2,7 +2,7 @@
 authors = ["Leonid Beder <leonid@lbeder.com>"]
 edition = "2021"
 name = "scrypt-kdf"
-version = "0.15.0"
+version = "0.16.0"
 
 [dependencies]
 better-panic = "0.3.0"
